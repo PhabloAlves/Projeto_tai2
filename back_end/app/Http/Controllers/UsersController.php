@@ -9,7 +9,7 @@ class UsersController extends Controller
 {
     public function index()
     {
-        $users = User::all();
+        $users = Users::all();
         return response()->json($users);
     }
 

@@ -2,39 +2,19 @@
 
 use Illuminate\Support\Facades\Route;
 
-/*
-|--------------------------------------------------------------------------
-| Web Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register web routes for your application. These
-| routes are loaded by the RouteServiceProvider within a group which
-| contains the "web" middleware group. Now create something great!
-|
-*/
-use App\Http\Controllers\usersController;
-use App\Http\Controllers\empresasController;
-use App\Http\Controllers\FuncionariosController;
-use App\Http\Controllers\ServicosController;
-use App\Http\Controllers\AgendamentosController;
-use App\Http\Controllers\CategoriasServicosController;
-use App\Http\Controllers\JornadasController;
-use App\Http\Controllers\ServicosFuncionariosController;
-
-Route::group(['prefix' => 'api'], function () {
     // Rotas para userss
-    Route::get('users', [usersController::class, 'index']);
-    Route::post('users', [usersController::class, 'store']);
+    Route::get('/users', 'UsersController@index');
+    Route::post('users', [UsersController::class, 'store']);
     Route::get('users/{users}', [usersController::class, 'show']);
     Route::put('users/{users}', [usersController::class, 'update']);
     Route::delete('users/{users}', [usersController::class, 'destroy']);
 
     // Rotas para empresass
-    Route::get('empresass', [empresasController::class, 'index']);
-    Route::post('empresass', [empresasController::class, 'store']);
-    Route::get('empresass/{empresas}', [empresasController::class, 'show']);
-    Route::put('empresass/{empresas}', [empresasController::class, 'update']);
-    Route::delete('empresass/{empresas}', [empresasController::class, 'destroy']);
+    Route::get('/empresas', [EmpresasController::class, 'index']);
+    Route::post('empresas', [empresasController::class, 'store']);
+    Route::get('empresas/{empresas}', [empresasController::class, 'show']);
+    Route::put('empresas/{empresas}', [empresasController::class, 'update']);
+    Route::delete('empresas/{empresas}', [empresasController::class, 'destroy']);
 
     // Rotas para Funcionarioss
     Route::get('Funcionarioss', [FuncionariosController::class, 'index']);
@@ -77,7 +57,15 @@ Route::group(['prefix' => 'api'], function () {
     Route::get('Servicos-Funcionarioss/{Servicos_Funcionarios}', [ServicosFuncionariosController::class, 'show']);
     Route::put('Servicos-Funcionarioss/{Servicos_Funcionarios}', [ServicosFuncionariosController::class, 'update']);
     Route::delete('Servicos-Funcionarioss/{Servicos_Funcionarios}', [ServicosFuncionariosController::class, 'destroy']);
-});
+
+    // Rotas para Textos
+    Route::get('textos', [TextosController::class, 'index']);
+    Route::post('textos', [TextosController::class, 'store']);
+    Route::get('textos/{texto}', [TextosController::class, 'show']);
+    Route::put('textos/{texto}', [TextosController::class, 'update']);
+    Route::delete('textos/{texto}', [TextosController::class, 'destroy']);
+
+
 
 Route::get('/', function () {
     return view('welcome');

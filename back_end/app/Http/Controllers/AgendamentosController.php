@@ -1,8 +1,6 @@
 <?php
 
 namespace App\Http\Controllers;
-
-use App\Models\Agendamento;
 use App\Models\Agendamentos;
 use Illuminate\Http\Request;
 
