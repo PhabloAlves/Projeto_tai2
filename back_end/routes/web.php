@@ -75,3 +75,43 @@ Route::get('/dashboard', function () {
 })->middleware(['auth'])->name('dashboard');
 
 require __DIR__.'/auth.php';
+
+Route::get('/agenda', function () {
+    return view('agenda');
+});
+
+//Cadastros
+Route::get('/empresa',  function () {
+    return view('empresa');
+});
+Route::get('/funcionarios', function () {
+    return view('funcionarios');
+});
+Route::get('/categoriaservicos',  function () {
+    return view('categoriaservicos');
+});
+Route::get('/servicos',  function () {
+    return view('servicos');
+});
+Route::get('/jornadas',  function () {
+    return view('jornadas');
+});
+Route::get('/usuarios',  function () {
+    return view('usuarios');
+});
+
+
+//Whatsapp
+
+
+Route::get('/agendamentos', function () {
+    return view('agendamentos');
+});
+
+Route::get('/configuracoes', function () {
+    return view('configuracoes');
+});
+
+Route::get('/ajuda', function () {
+    return view('ajuda');
+});
