@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 
 // Rotas para users
 Route::get('/users', 'App\Http\Controllers\UsersController@index');
+Route::get('/users_dados', 'App\Http\Controllers\UsersController@show_dados');
 Route::post('/users', 'App\Http\Controllers\UsersController@store');
 Route::get('/users/{user}', 'App\Http\Controllers\UsersController@show');
 Route::put('/users/{user}', 'App\Http\Controllers\UsersController@update');
@@ -31,11 +32,12 @@ Route::put('/servicos/{servico}', 'App\Http\Controllers\ServicosController@updat
 Route::delete('/servicos/{servico}', 'App\Http\Controllers\ServicosController@destroy');
 
 // Rotas para agendamentos
-Route::get('/agendamentos', 'App\Http\Controllers\AgendamentosController@index');
-Route::post('/agendamentos', 'App\Http\Controllers\AgendamentosController@store');
-Route::get('/agendamentos/{agendamento}', 'App\Http\Controllers\AgendamentosController@show');
-Route::put('/agendamentos/{agendamento}', 'App\Http\Controllers\AgendamentosController@update');
-Route::delete('/agendamentos/{agendamento}', 'App\Http\Controllers\AgendamentosController@destroy');
+Route::get('/agendamento', 'App\Http\Controllers\AgendamentosController@index');
+Route::get('/agendamento_user', 'App\Http\Controllers\AgendamentosController@index_by_user');
+Route::post('/agendamento', 'App\Http\Controllers\AgendamentosController@store');
+Route::get('/agendamento/{agendamento}', 'App\Http\Controllers\AgendamentosController@show');
+Route::put('/agendamento/{agendamento}', 'App\Http\Controllers\AgendamentosController@update');
+Route::delete('/agendamento/{agendamento}', 'App\Http\Controllers\AgendamentosController@destroy');
 
 // Rotas para categorias de serviços
 Route::get('/categorias-servicos', 'App\Http\Controllers\CategoriasServicosController@index');
@@ -67,7 +69,7 @@ Route::delete('/textos/{texto}', 'App\Http\Controllers\TextosController@destroy'
 
 // Rotas para views
 Route::get('/', function () {
-    return view('welcome');
+    return view('dashboard');
 });
 
 Route::get('/dashboard', function () {

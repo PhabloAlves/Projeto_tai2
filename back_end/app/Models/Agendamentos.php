@@ -23,6 +23,7 @@ class Agendamentos extends Model
         'hora_inicio',
         'hora_fim',
         'status',
+        'nome_cliente',
     ];
 
     /**
@@ -32,8 +33,8 @@ class Agendamentos extends Model
      */
     protected $casts = [
         'data' => 'date',
-        'hora_inicio' => 'time',
-        'hora_fim' => 'time',
+        'hora_inicio' => 'datetime:H:i:s',
+        'hora_fim' => 'datetime:H:i:s',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];
