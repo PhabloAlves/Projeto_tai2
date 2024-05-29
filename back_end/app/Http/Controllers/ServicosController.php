@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Servico;
 use App\Models\Servicos;
 use Illuminate\Http\Request;
 
@@ -10,8 +9,10 @@ class ServicosController extends Controller
 {
     public function index()
     {
-        $servicos = Servicos::all();
-        return response()->json($servicos);
+        return view('site.servicos.index');
+
+        // $servicos = Servicos::all();
+        // return response()->json($servicos);
     }
 
     public function show($id)

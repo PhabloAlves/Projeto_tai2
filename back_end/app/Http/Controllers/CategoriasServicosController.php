@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\CategoriaServico;
 use App\Models\CategoriasServicos;
 use Illuminate\Http\Request;
 
@@ -10,8 +9,10 @@ class CategoriasServicosController extends Controller
 {
     public function index()
     {
-        $categorias = CategoriasServicos::all();
-        return response()->json($categorias);
+        return view('site.categoriasservicos.index');
+        
+        // $categorias = CategoriasServicos::all();
+        // return response()->json($categorias);
     }
 
     public function show($id)

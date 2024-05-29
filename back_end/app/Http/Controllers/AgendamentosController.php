@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use App\Models\Agendamentos;
 use Illuminate\Http\Request;
 
@@ -8,8 +9,10 @@ class AgendamentosController extends Controller
 {
     public function index()
     {
-        $agendamentos = Agendamentos::all();
-        return response()->json($agendamentos);
+        return view('site.agendamentos.index');
+
+        // $agendamentos = Agendamentos::all();
+        // return response()->json($agendamentos);
     }
 
     public function show($id)

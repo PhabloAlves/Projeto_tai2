@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Jornada;
 use App\Models\Jornadas;
 use Illuminate\Http\Request;
 
@@ -10,8 +9,10 @@ class JornadasController extends Controller
 {
     public function index()
     {
-        $jornadas = Jornadas::all();
-        return response()->json($jornadas);
+        return view('site.jornadas.index');
+
+        // $jornadas = Jornadas::all();
+        // return response()->json($jornadas);
     }
 
     public function show($id)
