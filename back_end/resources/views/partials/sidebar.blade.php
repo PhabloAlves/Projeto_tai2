@@ -3,6 +3,7 @@
         <i><img style="width: 70px; margin-top: 30px;" src="{{ url('Assets/Images/logoalone.png') }}" alt=""></i>
         <span class="logo_name"><img style="width: 170px; margin-top: 100px;" src="{{ url('Assets/Images/letras.png') }}" alt=""></span>
     </div>
+    <hr>
     <ul class="nav-links">
         <li>
             <div class="profile-details">
