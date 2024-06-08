@@ -18,12 +18,12 @@
         </li>
         <hr>
         <li class="{{ request()->is('/') || request()->is('agenda') ? 'active' : '' }}">
-            <a href="{{ url('agenda') }}">
+            <a href="{{ url('agendas') }}">
                 <i class='bx bx-layout'></i>
                 <span class="link_name">Agenda</span>
             </a>
             <ul class="sub-menu blank">
-                <li><a class="link_name" href="#">Agenda</a></li>
+                <li><a class="link_name" href="{{ url('agendas') }}">Dashboard</a></li>
             </ul>
         </li>
         <li class="{{ request()->is('cadastros*') ? 'active' : '' }}">
@@ -36,7 +36,7 @@
             </div>
             <ul class="sub-menu">
                 <li><a class="link_name" href="">Cadastros</a></li>
-                <li><a href="{{ url('empresa') }}">Empresa</a></li>
+                <li><a href="{{ url('empresas') }}">Empresa</a></li>
                 <li><a href="{{ url('funcionarios') }}">Funcionários</a></li>
                 <li><a href="{{ url('categoriaservicos') }}">Categoria de Serviços</a></li>
                 <li><a href="{{ url('servicos') }}">Serviços</a></li>
