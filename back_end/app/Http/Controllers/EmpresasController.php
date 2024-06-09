@@ -10,7 +10,7 @@ class EmpresasController extends Controller
 {
     public function index()
     {
-        $empresa = Empresas::where('idusuario', 1)->first() ?? new Empresas();
+        $empresa = Empresas::where('users_id', 1)->first() ?? new Empresas();
         return view('site.empresas.index', compact('empresa'));
     }
 
@@ -25,7 +25,7 @@ class EmpresasController extends Controller
         // }
 
         $empresa = new Empresas();
-        $empresa->idusuario = 1;
+        $empresa->users_id = 1;
         $empresa->identificacao = $request->input('identificacao');
         $empresa->razao_social = $request->input('razaoSocial');
         $empresa->tipo_inscricao = $request->input('tipoInscricao');

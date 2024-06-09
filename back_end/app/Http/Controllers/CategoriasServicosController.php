@@ -9,10 +9,9 @@ class CategoriasServicosController extends Controller
 {
     public function index()
     {
-        return view('site.categoriasservicos.index');
         
-        // $categorias = CategoriasServicos::all();
-        // return response()->json($categorias);
+        $categorias = CategoriasServicos::all();
+        return response()->json($categorias);
     }
 
     public function show($id)

@@ -9,10 +9,10 @@ class JornadasController extends Controller
 {
     public function index()
     {
-        return view('site.jornadas.index');
 
-        // $jornadas = Jornadas::all();
-        // return response()->json($jornadas);
+
+        $jornadas = Jornadas::all();
+        return response()->json($jornadas);
     }
 
     public function show($id)

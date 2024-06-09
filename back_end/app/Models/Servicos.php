@@ -20,6 +20,7 @@ class Servicos extends Model
         'categorias_servicos_id',
         'nome_servico',
         'servicos',
+        'valor',
     ];
 
     /**

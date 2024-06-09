@@ -10,19 +10,18 @@ class UsersController extends Controller
 {
     public function index()
     {
-        return view('site.usuarios.index');
 
-        // $users = User::all();
-        // return response()->json($users);
+        $users = User::all();
+        return response()->json($users);
     }
 
     public function show_dados()
     {
-        $userId = Auth::id();
+        $userId = 1; //teste, lembrar de mudar quando login voltar
         $user = User::find($userId);
         $userFormatado = [];
         $userFormatado = [[
-            'name' => $user->name, // Formatando a data adequadamente
+            'name' => $user->name,
             'email' => $user->email,
         ]];
 

@@ -79,3 +79,40 @@ Route::get('/configuracoes', function () {
 Route::get('/ajuda', function () {
     return view('ajuda');
 });
+
+Route::get('/usuarios', function () {
+    return view('site.usuarios.index');
+});
+
+Route::get('/agendas', function () {
+    return view('site.agendas.index');
+});
+
+Route::get('/categoriaservicos', function () {
+    return view('site.categoriasservicos.index');
+});
+
+Route::get('/servicos', function () {
+    return view('site.servicos.index');
+});
+
+Route::get('/jornadas', function () {
+    return view('site.jornadas.index');
+});
+
+Route::get('/agendamentos', function () {
+    return view('site.agendamentos.index');
+});
+
+Route::get('/ajuda', function () {
+    return view('site.ajuda.index');
+});
+
+Route::get('/configuracoes', function () {
+    return view('site.configuracoes.index');
+});
+
+
+
+
+

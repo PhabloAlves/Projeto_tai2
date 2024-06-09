@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'Configurações - Marca Aí')
+@section('Configurações', 'Configurações - Marca Aí')
 
 @section('header', 'Configurações')
 

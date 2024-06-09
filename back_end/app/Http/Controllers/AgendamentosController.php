@@ -12,15 +12,15 @@ class AgendamentosController extends Controller
 {
     public function index()
     {
-        return view('site.agendamentos.index');
 
-        // $agendamentos = Agendamentos::all();
-        // return response()->json($agendamentos);
+
+        $agendamentos = Agendamentos::all();
+        return response()->json($agendamentos);
     }
 
     public function index_by_user()
-{
-    $userId = Auth::id();
+    {
+    $userId = 1; //teste, lembrar de mudar quando login voltar
     $agendamentos = Agendamentos::where('users_id', $userId)->get();
     $agendamentosFormatados = [];
 
@@ -28,7 +28,9 @@ class AgendamentosController extends Controller
     foreach ($agendamentos as $agendamento) {
         $servico = Servicos::find($agendamento->servicos_id);
         $agendamentoFormatado = [
-            'Data' => $agendamento->data->format('Y-m-d H:i:s'), // Formatando a data adequadamente
+            'Data' => $agendamento->data->format('Y-m-d'),
+            'hora_inicio' =>$agendamento->hora_inicio->format('H:i'),
+            'hora_fim' =>$agendamento->hora_fim->format('H:i'),
             'Cliente' => $agendamento->nome_cliente, // Supondo que você tenha um campo 'nome_cliente'
             'Nome' => $servico ? $servico->nome_servico : 'Serviço não encontrado',
             'Status' => $agendamento->status,
@@ -39,7 +41,7 @@ class AgendamentosController extends Controller
     }
 
     return response()->json($agendamentosFormatados);
-}
+    }
 
 
     public function show($id)

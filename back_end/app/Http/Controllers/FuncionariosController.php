@@ -18,24 +18,18 @@ class FuncionariosController extends Controller
 
     public function index()
     {
-        $empresa = Empresas::where('idusuario', 1)->first();
-        $funcionarios = Funcionarios::where('idempresa', $empresa->id)->get();
+        $id = 1;//teste, lembrar de mudar quando login voltar
+        $empresa = Empresas::where('users_id', $id)->first();
+        $funcionarios = Funcionarios::where('empresas_id', $empresa->id)->get();
 
         return view('site.funcionarios.index', compact('funcionarios'));
     }
 
-    public function create($id = null)
+    public function create(Request $request)
     {
-        if ($id != null) {
-            $funcionario = Funcionarios::findOrFail($id);
-
-            $dataNascimento = $funcionario->data_nascimento ? $funcionario->data_nascimento->format('Y-m-d') : null;
-            $funcionario = $funcionario->toArray();
-            $funcionario['data_nascimento'] = $dataNascimento;
-        } else {
-            $funcionario = new Funcionarios();
-        }
-
+        $funcionario = new Funcionarios;
+        $funcionario->fill($request->all());
+        $funcionario->save();
         return view('site.funcionarios.form', compact('funcionario'));
     }
 
@@ -49,12 +43,12 @@ class FuncionariosController extends Controller
         //         ->withInput();
         // }
 
-        $empresa = Empresas::where('idusuario', 1)->first();
+        $empresa = Empresas::where('users_id', 1)->first();
 
         $funcionario = new Funcionarios();
 
-        $funcionario->idempresa = $empresa->id;
-        $funcionario->idusuario = 1;
+        $funcionario->empresas_id = $empresa->id;
+        $funcionario->users_id = 1;
         $funcionario->nome = $request->input('nome');
         $funcionario->sobrenome = $request->input('sobrenome');
         $funcionario->data_nascimento = $request->input('dataNascimento');

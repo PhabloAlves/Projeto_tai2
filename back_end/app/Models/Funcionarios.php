@@ -17,6 +17,7 @@ class Funcionarios extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'empresas_id',
         'users_id',
         'nome',
@@ -30,8 +31,9 @@ class Funcionarios extends Model
     public static function validate($data)
     {
         return Validator::make($data, [
-            'idempresa' => 'required|integer',
-            'idusuario' => 'required|integer',
+            'id' => 'required|integer',
+            'empresas_id' => 'required|integer',
+            'users_id' => 'required|integer',
             'nome' => 'required|string|max:100',
             'sobrenome' => 'required|string|max:100',
             'data_nascimento' => 'required|date',
@@ -39,8 +41,9 @@ class Funcionarios extends Model
             'inscricao' => 'required|string|max:18',
             'telefone' => 'required|string|max:20',
         ], [
-            'idempresa.required' => 'O campo idempresa é obrigatório.',
-            'idusuario.required' => 'O campo idusuario é obrigatório.',
+            'id.required' => 'O campo id é obrigatório.',
+            'empresas_id.required' => 'O campo empresas_id é obrigatório.',
+            'users_id.required' => 'O campo users_id é obrigatório.',
             'nome.required' => 'O campo nome é obrigatório.',
             'sobrenome.required' => 'O campo sobrenome é obrigatório.',
             'data_nascimento.required' => 'O campo data de nascimento é obrigatório.',

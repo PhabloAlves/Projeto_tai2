@@ -9,10 +9,8 @@ class ServicosController extends Controller
 {
     public function index()
     {
-        return view('site.servicos.index');
-
-        // $servicos = Servicos::all();
-        // return response()->json($servicos);
+        $servicos = Servicos::all();
+        return response()->json($servicos);
     }
 
     public function show($id)
