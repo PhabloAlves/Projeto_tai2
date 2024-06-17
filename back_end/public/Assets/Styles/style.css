@@ -303,6 +303,9 @@ body {
 	font-family: sans-serif;
 	font-weight: 100;
   font-size: 20px;
+
+  justify-content: center;
+  align-items: center;
 }
 
 .container {
@@ -313,8 +316,10 @@ body {
 }
 
 table {
-	width: 1500px;
-	border-collapse: collapse;
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+	
 	overflow: hidden;
 	box-shadow: 0 0 20px rgba(0,0,0,0.1);
   border-radius: 15px;

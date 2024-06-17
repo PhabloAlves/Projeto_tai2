@@ -21,13 +21,15 @@
         </ul>
     </div>
     @endif
+    
+    <div class="rounded-4 bg-light p-4 mb-4"> 
     <div class="row justify-content-end mb-3">
         <div class="col-auto">
             <a href="{{ route('funcionarios.create') }}" class="btn btn-primary" target="_blank">Novo</a>
         </div>
     </div>
     <div class="row">
-        <div class="col">
+        <div class="col bg-light">
             <table class="table">
                 <thead>
                     <tr>
@@ -46,7 +48,7 @@
                             <form action="{{ route('funcionarios.delete', $funcionario->id) }}" method="POST" style="display: inline;">
                                 @csrf
                                 @method('DELETE')
-                                <button type="submit" style="border: none; background-color: transparent;" class="text-primary"><i class="fas fa-trash"></i></button>
+                                <button type="submit" style="border: none; background-color: transparent;" class="text-primary"><i style="color: red;" class="fas fa-trash" ></i></button>
                             </form>
                         </td>
                     </tr>
@@ -54,6 +56,7 @@
                 </tbody>
             </table>
         </div>
+    </div>
     </div>
 </div>
 @endsection

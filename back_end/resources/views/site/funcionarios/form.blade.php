@@ -9,7 +9,7 @@
 <div class="container-fluid mt-5">
     <div class="row justify-content-center">
         <div class="col-md-12">
-            <div class="rounded bg-white p-4 mb-4">
+            <div class="rounded-4 bg-white p-4 mb-4">
                 <form id="funcionarioForm" action="{{ $funcionario['id'] ? route('funcionarios.update', $funcionario['id']) : route('funcionarios.store') }}" method="POST">
                     @csrf
                     @if(isset($funcionario['id']))

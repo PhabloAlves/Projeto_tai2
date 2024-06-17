@@ -28,8 +28,8 @@ class FuncionariosController extends Controller
     public function create(Request $request)
     {
         $funcionario = new Funcionarios;
-        $funcionario->fill($request->all());
-        $funcionario->save();
+       // $funcionario->fill($request->all());
+       // $funcionario->save();
         return view('site.funcionarios.form', compact('funcionario'));
     }
 
