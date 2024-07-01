@@ -5,16 +5,26 @@
 @section('header', 'Cadastro | Categoria de Serviços')
 
 @section('content')
-<div class="rounded-4 bg-light p-4 mb-4"> 
-        <label for="tipoInscricao" class="form-label">Selecione a categoria de serviços:</label>
-              <select name="tipoInscricao" class="form-select" id="tipoInscricao">
-                      <option value="">Selecione...</option>
-                      <option value="1">OP1</option>
-                      <option value="2">OP2</option>
-              </select>
-
-              <div style="padding: 10px;" class="d-grid gap-2">
-        <button class="btn btn-primary" type="button">Selecione</button>
-    </div>
+<div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+                <div class="col-md-12">
+                        <div class="rounded-4 bg-white p-4 mb-4">
+                                <form id="categoriaForm" action="{{ $categoria['id'] ? route('categoriasServicos.update', $categoria['id']) : route('categoriasServicos.store') }}" method="POST">
+                                        @csrf
+                                        @if(isset($categoria['id']))
+                                        @method('PUT')
+                                        @endif
+                                        <div class="col-md-8">
+                                                <label for="nome_categoria" class="form-label">Categoria de Serviço:</label>
+                                                <input name="nome_categoria" type="text" class="form-control" id="nome_categoria" placeholder="Categoria de Serviço" value="{{ old('nome_categoria', $categoria['nome_categoria'] ?? '') }}">
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                                <button type="submit" class="btn btn-primary mr-2">{{ isset($categoria['id']) ? 'Atualizar' : 'Salvar' }}</button>
+                                                <a href="javascript:window.close();" class="btn btn-danger">Cancelar</a>
+                                        </div>
+                                </form>
+                        </div>
+                </div>
+        </div>
 </div>
 @endsection

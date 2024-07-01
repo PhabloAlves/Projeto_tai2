@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Agendamentos;
 use App\Models\Funcionarios;
 use App\Models\Empresas;
+use App\Models\Jornadas;
 use Illuminate\Http\Request;
 
 class FuncionariosController extends Controller
@@ -18,18 +20,25 @@ class FuncionariosController extends Controller
 
     public function index()
     {
-        $id = 1;//teste, lembrar de mudar quando login voltar
+        $id = 1; //teste, lembrar de mudar quando login voltar
         $empresa = Empresas::where('users_id', $id)->first();
         $funcionarios = Funcionarios::where('empresas_id', $empresa->id)->get();
 
         return view('site.funcionarios.index', compact('funcionarios'));
     }
 
-    public function create(Request $request)
+    public function create($id = null)
     {
-        $funcionario = new Funcionarios;
-       // $funcionario->fill($request->all());
-       // $funcionario->save();
+        if ($id != null) {
+            $funcionario = Funcionarios::findOrFail($id);
+
+            $dataNascimento = $funcionario->data_nascimento ? $funcionario->data_nascimento->format('Y-m-d') : null;
+            $funcionario = $funcionario->toArray();
+            $funcionario['data_nascimento'] = $dataNascimento;
+        } else {
+            $funcionario = new Funcionarios();
+        }
+
         return view('site.funcionarios.form', compact('funcionario'));
     }
 
@@ -90,6 +99,16 @@ class FuncionariosController extends Controller
     public function delete($id)
     {
         $funcionario = Funcionarios::findOrFail($id);
+        $jornadas = Jornadas::where('funcionarios_id', $id)->exists();
+        $agendamentos = Agendamentos::where('funcionarios_id', $id)->exists();
+
+        if ($jornadas) {
+            return redirect()->back()->with('error', 'Erro, funcionário vinculado a jornada(s)!');
+        }
+
+        if ($agendamentos) {
+            return redirect()->back()->with('error', 'Erro, funcionário vinculado a agendamento(s)!');
+        }
 
         if ($funcionario->delete()) {
             return redirect()->back()->with('success', 'Funcionário deletado com sucesso!');

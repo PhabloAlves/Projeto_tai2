@@ -266,7 +266,7 @@
 }
 
 .home-section .home-content .text{
-  font-size: 50px;
+  font-size: 35px;
   font-weight: 600;
   margin: 50px;
   margin-top: 100px;
@@ -359,4 +359,12 @@ tbody {
 
 .cancel {
   color: red;
+}
+
+.select2-selection__choice {
+  background-color: #3f60d7 !important; /* Cor de fundo personalizada */
+  color: white !important; /* Cor do texto personalizada */
+}
+.select2-selection__choice__remove {
+  color: white !important; /* Cor do ícone de remoção personalizada */
 }

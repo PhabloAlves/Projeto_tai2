@@ -38,7 +38,7 @@
                 <li><a class="link_name" href="">Cadastros</a></li>
                 <li><a href="{{ url('empresas') }}">Empresa</a></li>
                 <li><a href="{{ url('funcionarios') }}">Funcionários</a></li>
-                <li><a href="{{ url('categoriaservicos') }}">Categoria de Serviços</a></li>
+                <li><a href="{{ url('categoriasservicos') }}">Categoria de Serviços</a></li>
                 <li><a href="{{ url('servicos') }}">Serviços</a></li>
                 <li><a href="{{ url('jornadas') }}">Jornadas</a></li>
                 <li><a href="{{ url('usuarios') }}">Usuários</a></li>

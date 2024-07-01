@@ -32,8 +32,8 @@ class Jornadas extends Model
      */
     protected $casts = [
         'diaMes' => 'date',
-        'horaInicio' => 'time',
-        'horaFim' => 'time',
+        'horaInicio' => 'string',
+        'horaFim' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
     ];

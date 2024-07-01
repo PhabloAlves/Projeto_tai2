@@ -1,5 +1,5 @@
 $(document).ready(function () {
-    $('#funcionarioForm').submit(function (event) {
+    $('#categoriaForm').submit(function (event) {
         event.preventDefault();
 
         $.ajax({

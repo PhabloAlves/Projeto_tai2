@@ -26,33 +26,32 @@ Route::put('/funcionarios/{id}', 'App\Http\Controllers\FuncionariosController@up
 Route::delete('/funcionarios/{id}', 'App\Http\Controllers\FuncionariosController@delete')->name('funcionarios.delete');
 
 // Rotas para serviços
-Route::get('/servicos', 'App\Http\Controllers\ServicosController@index');
-Route::post('/servicos', 'App\Http\Controllers\ServicosController@store');
-Route::get('/servicos/{servico}', 'App\Http\Controllers\ServicosController@show');
-Route::put('/servicos/{servico}', 'App\Http\Controllers\ServicosController@update');
-Route::delete('/servicos/{servico}', 'App\Http\Controllers\ServicosController@delete');
+Route::get('/servicos', 'App\Http\Controllers\ServicosController@index')->name('servicos.index');
+Route::get('/servicos/create/{id?}', 'App\Http\Controllers\ServicosController@create')->name('servicos.create');
+Route::delete('/servicos/{id}', 'App\Http\Controllers\ServicosController@delete')->name('servicos.delete');
+Route::post('/servicos', 'App\Http\Controllers\ServicosController@store')->name('servicos.store');
+Route::put('/servicos/{id}', 'App\Http\Controllers\ServicosController@update')->name('servicos.update');
 
 // Rotas para agendamentos
-Route::get('/agendamento', 'App\Http\Controllers\AgendamentosController@index');
-Route::get('/agendamento_user', 'App\Http\Controllers\AgendamentosController@index_by_user');
-Route::post('/agendamento', 'App\Http\Controllers\AgendamentosController@store');
-Route::get('/agendamento/{agendamento}', 'App\Http\Controllers\AgendamentosController@show');
-Route::put('/agendamento/{agendamento}', 'App\Http\Controllers\AgendamentosController@update');
-Route::delete('/agendamento/{agendamento}', 'App\Http\Controllers\AgendamentosController@destroy');
+Route::get('/agendamentos', 'App\Http\Controllers\AgendamentosController@index')->name('agendamentos.index');
+Route::get('/agendamentos/create/{id?}', 'App\Http\Controllers\AgendamentosController@create')->name('agendamentos.create');
+Route::delete('/agendamentos/{id}', 'App\Http\Controllers\AgendamentosController@delete')->name('agendamentos.delete');
+Route::post('/agendamentos', 'App\Http\Controllers\AgendamentosController@store')->name('agendamentos.store');
+Route::put('/agendamentos/{id}', 'App\Http\Controllers\AgendamentosController@update')->name('agendamentos.update');
 
 // Rotas para categorias de serviços
-Route::get('/categorias-servicos', 'App\Http\Controllers\CategoriasServicosController@index');
-Route::post('/categorias-servicos', 'App\Http\Controllers\CategoriasServicosController@store');
-Route::get('/categorias-servicos/{categoria_servico}', 'App\Http\Controllers\CategoriasServicosController@show');
-Route::put('/categorias-servicos/{categoria_servico}', 'App\Http\Controllers\CategoriasServicosController@update');
-Route::delete('/categorias-servicos/{categoria_servico}', 'App\Http\Controllers\CategoriasServicosController@destroy');
+Route::get('/categoriasservicos', 'App\Http\Controllers\CategoriasServicosController@index')->name('categoriasServicos.index');
+Route::get('/categoriasservicos/create/{id?}', 'App\Http\Controllers\CategoriasServicosController@create')->name('categoriasServicos.create');
+Route::delete('/categoriasservicos/{id}', 'App\Http\Controllers\CategoriasServicosController@delete')->name('categoriasServicos.delete');
+Route::post('/categoriasservicos', 'App\Http\Controllers\CategoriasServicosController@store')->name('categoriasServicos.store');
+Route::put('/categoriasservicos/{id}', 'App\Http\Controllers\CategoriasServicosController@update')->name('categoriasServicos.update');
 
 // Rotas para jornadas
-Route::get('/jornadas', 'App\Http\Controllers\JornadasController@index');
-Route::post('/jornadas', 'App\Http\Controllers\JornadasController@store');
-Route::get('/jornadas/{jornada}', 'App\Http\Controllers\JornadasController@show');
-Route::put('/jornadas/{jornada}', 'App\Http\Controllers\JornadasController@update');
-Route::delete('/jornadas/{jornada}', 'App\Http\Controllers\JornadasController@destroy');
+Route::get('/jornadas', 'App\Http\Controllers\JornadasController@index')->name('jornadas.index');
+Route::get('/jornadas/create/{id?}', 'App\Http\Controllers\JornadasController@create')->name('jornadas.create');
+Route::delete('/jornadas/{id}', 'App\Http\Controllers\JornadasController@delete')->name('jornadas.delete');
+Route::post('/jornadas', 'App\Http\Controllers\JornadasController@store')->name('jornadas.store');
+Route::put('/jornadas/{id}', 'App\Http\Controllers\JornadasController@update')->name('jornadas.update');
 
 // Rotas para textos
 Route::get('/textos', 'App\Http\Controllers\TextosController@index');
@@ -92,17 +91,17 @@ Route::get('/categoriaservicos', function () {
     return view('site.categoriasservicos.index');
 });
 
-Route::get('/servicos', function () {
-    return view('site.servicos.index');
-});
+// Route::get('/servicos', function () {
+//     return view('site.servicos.index');
+// });
 
-Route::get('/jornadas', function () {
-    return view('site.jornadas.index');
-});
+// Route::get('/jornadas', function () {
+//     return view('site.jornadas.index');
+// });
 
-Route::get('/agendamentos', function () {
-    return view('site.agendamentos.index');
-});
+// Route::get('/agendamentos', function () {
+//     return view('site.agendamentos.index');
+// });
 
 Route::get('/ajuda', function () {
     return view('site.ajuda.index');

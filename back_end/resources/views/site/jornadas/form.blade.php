@@ -5,64 +5,107 @@
 @section('header', 'Cadastro | Jornadas')
 
 @section('content')
-<div class="rounded-4 bg-light p-4 mb-4"> 
-        <div class="row mb-3">
-                            <div class="col-md-6">
-                                <label for="funcionarios_id" class="form-label">Nome do funcionário:</label>
-                                <input name="funcionarios_id" type="text" class="form-control" id="" placeholder="Nome">
-                            </div>
-                            <div class="col-md-6">
-                                    <label for="operacao" class="form-label">Operação:</label>
-                                    <select class="form-select" id="inputGroupSelect01">
-                                        <option selected>seleção</option>
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                        <option value="5">5</option>
-                                        <option value="6">6</option>
-                                    </select>
-                                </div>
-                            </div>
-                    
-    
-    <div class="row mb-3">
-            <div class="col-md-3">
-                    <label for="basic-url" class="form-label">Dia semana:</label>
-            <div class="input-group mb-3">
-                <select class="form-select" id="inputGroupSelect01">
-                    <option selected>Dias</option>
-                    <option value="1">Domingo</option>
-                    <option value="2">Segunda-feira</option>
-                    <option value="3">Terça-feira</option>
-                    <option value="4">Quarta-feira</option>
-                    <option value="5">Quinta-feira</option>
-                    <option value="6">Sexta-feira</option>
-                    <option value="7">Sábado</option>
-                </select>
-            </div>              
-    </div>
+<style>
+        .select2-selection__choice {
+                background-color: #3f60d7 !important;
+                /* Cor de fundo personalizada */
+                color: white !important;
+                /* Cor do texto personalizada */
+        }
 
-    <div class="col-md-3">
-            <label for="diaMes" class="form-label">Dia do mês:</label>
-            <input name="datames" type="date" class="form-control" id="datames" value="{{ old('data_mes', $funcionario['data_mes'] ?? '') }}">
-    </div>
+        .select2-selection__choice__remove {
+                color: white !important;
+                /* Cor do ícone de remoção personalizada */
+        }
+</style>
 
-    <div class="col-md-2">
-            <label for="horaInicio" class="form-label">Hora início:</label>
-            <input name="horaInicio" type="text" class="form-control" id="horaInicio">
-    </div>
-
-    <div class="col-md-2">
-            <label for="horaFim" class="form-label">Hora fim:</label>
-            <input name="horaFim" type="text" class="form-control" id="horaFim">
-    </div>
-
-
-</div>
-        <div class="d-flex justify-content-end">
-            <button type="submit" class="btn btn-primary mr-2">Atualizar</button>
-            <a href="javascript:window.close();" class="btn btn-danger">Cancelar</a>
+<div class="container-fluid mt-5">
+        <div class="row justify-content-center">
+                <div class="col-md-12">
+                        <div class="rounded-4 bg-white p-4 mb-4">
+                                <form id="jornadaForm" action="{{ $jornada['id'] ? route('jornadas.update', $jornada['id']) : route('jornadas.store') }}" method="POST">
+                                        @csrf
+                                        @if(isset($jornada['id']))
+                                        @method('PUT')
+                                        @endif
+                                        @if(session('success'))
+                                        <div class="alert alert-success">
+                                                {{ session('success') }}
+                                        </div>
+                                        @endif
+                                        @if ($errors->any() || session('error'))
+                                        <div class="alert alert-danger">
+                                                {{ session('error') }}
+                                                <ul>
+                                                        @foreach ($errors->all() as $error)
+                                                        <li>{{ $error }}</li>
+                                                        @endforeach
+                                                </ul>
+                                        </div>
+                                        @endif
+                                        <div class="row mb-3">
+                                                <div class="col-md-8">
+                                                        <label for="funcionario_id" class="form-label">Funcionário:</label>
+                                                        <select name="funcionario_id" class="form-select" id="funcionario_id">
+                                                                <option value="">Selecione...</option>
+                                                                @foreach($funcionarios as $funcionario)
+                                                                <option value="{{ $funcionario['id'] }}" {{ (isset($jornada) && $jornada['funcionarios_id'] == $funcionario['id']) ? 'selected' : '' }}>
+                                                                        {{ $funcionario['nome'] . ' ' . $funcionario['sobrenome'] }}
+                                                                </option>
+                                                                @endforeach
+                                                        </select>
+                                                </div>
+                                                <div class="col-md-4">
+                                                        <label for="operacao" class="form-label">Operação:</label>
+                                                        <select name="operacao" class="form-select" id="operacao">
+                                                                <option value="">Selecione...</option>
+                                                                <option value="0" {{ isset($jornada) && $jornada['operacao'] === 0 ? 'selected' : '' }}>Adição</option>
+                                                                <option value="1" {{ isset($jornada) && $jornada['operacao'] === 1 ? 'selected' : '' }}>Subtração</option>
+                                                        </select>
+                                                </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                                <div class="col-md-12">
+                                                        <label for="diaSemana" class="form-label">Dia da Semana:</label>
+                                                        <div class="input-group">
+                                                                <select name="diaSemana[]" class="form-select" id="diaSemana" multiple="multiple">
+                                                                        <option value="1" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(0, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Segunda-Feira</option>
+                                                                        <option value="2" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(1, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Terça-Feira</option>
+                                                                        <option value="3" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(2, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Quarta-Feira</option>
+                                                                        <option value="4" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(3, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Quinta-Feira</option>
+                                                                        <option value="5" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(4, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Sexta-Feira</option>
+                                                                        <option value="6" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(5, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Sábado</option>
+                                                                        <option value="0" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(6, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Domingo</option>
+                                                                </select>
+                                                                <div class="input-group-append">
+                                                                        <button type="button" class="btn btn-outline-dark" id="selectAllDays">
+                                                                                <i class="fas fa-plus"></i>
+                                                                        </button>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        <div class="row mb-3">
+                                                <div class="col-md-4">
+                                                        <label for="diaMes" class="form-label">Dia do Mês:</label>
+                                                        <input name="diaMes" type="date" class="form-control" id="diaMes" value="{{ old('diaMes', $jornada['diaMes'] ?? '') }}">
+                                                </div>
+                                                <div class="col-md-4">
+                                                        <label for="horaInicio" class="form-label">Hora Início:</label>
+                                                        <input name="horaInicio" type="time" class="form-control" id="horaInicio" value="{{ old('horaInicio', $jornada['horaInicio'] ?? '') }}">
+                                                </div>
+                                                <div class="col-md-4">
+                                                        <label for="horaFim" class="form-label">Hora Fim:</label>
+                                                        <input name="horaFim" type="time" class="form-control" id="horaFim" value="{{ old('horaFim', $jornada['horaFim'] ?? '') }}">
+                                                </div>
+                                        </div>
+                                        <div class="d-flex justify-content-end">
+                                                <button type="submit" class="btn btn-primary mr-2">{{ isset($jornada['id']) ? 'Atualizar' : 'Salvar' }}</button>
+                                                <a href="javascript:window.close();" class="btn btn-danger">Cancelar</a>
+                                        </div>
+                                </form>
+                        </div>
+                </div>
         </div>
 </div>
 @endsection
