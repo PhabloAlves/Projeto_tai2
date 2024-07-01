@@ -21,9 +21,8 @@ class CreateFuncionariosTable extends Migration
             $table->string('sobrenome', 100);
             $table->date('data_nascimento');
             $table->tinyInteger('tipo_inscricao');
-            $table->integer('inscricao');
+            $table->string('inscricao', 18)->unique();
             $table->string('telefone', 20);
-            $table->timestamps();
 
             $table->foreign('users_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('empresas_id')->references('id')->on('empresas')->onDelete('cascade');

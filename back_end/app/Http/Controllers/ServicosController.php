@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Servico;
 use App\Models\Servicos;
 use Illuminate\Http\Request;
 

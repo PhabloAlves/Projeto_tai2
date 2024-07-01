@@ -19,6 +19,8 @@ class Servicos extends Model
         'users_id',
         'categorias_servicos_id',
         'nome_servico',
+        'servicos',
+        'valor',
     ];
 
     /**

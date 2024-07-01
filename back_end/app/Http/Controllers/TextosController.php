@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Texto;
+use App\Models\Textos;
 
 class TextosController extends Controller
 {
 
     public function index()
     {
-        $textos = Texto::all();
-        return response()->json($textos);
+        return view('site.textos.index');
+
+        // $textos = Texto::all();
+        // return response()->json($textos);
     }
 
 

@@ -19,7 +19,7 @@ class CreateEmpresasTable extends Migration
             $table->string('identificacao', 150);
             $table->string('razao_social', 150);
             $table->tinyInteger('tipo_inscricao');
-            $table->integer('inscricao');
+            $table->string('inscricao', 18)->unique();
             $table->string('email', 100);
             $table->string('telefone', 20);
             $table->string('endereco', 100);
