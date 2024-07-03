@@ -10,6 +10,7 @@ use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Http;
 use App\Models\Agendamentos;
 use App\Models\Funcionarios;
+use App\Models\Jornadas;
 use App\Models\Servicos;
 use Carbon\Carbon;
 
@@ -49,27 +50,27 @@ class FetchAgendamentos implements ShouldQueue
                     \Log::warning('Funcionário não encontrado: ' . $agendamento['funcionario']);
                     continue; // Pular para o próximo registro
                 }
-                
+
                 // Verificar se o serviço existe
                 $servico = Servicos::where('nome_servico', $agendamento['servico'])->first();
                 if (!$servico) {
                     \Log::warning('Serviço não encontrado: ' . $agendamento['servico']);
                     continue; // Pular para o próximo registro
                 }
-                
+
                 // Calcular a hora_fim
-                $horaInicio = Carbon::createFromFormat('H:i', $agendamento['hora_inicio']);
+                $horaInicio = Carbon::createFromFormat('H:i:s', $agendamento['hora_inicio']);
                 $horaFim = $horaInicio->copy()->addMinutes($servico->duracao);
-                
+
                 // Verificar se o agendamento já existe no banco de dados
                 $existingAgendamento = Agendamentos::find($id);
-                
+
                 if ($existingAgendamento) {
                     // Atualizar o agendamento existente
                     $existingAgendamento->update([
                         'data' => $this->formatarData($agendamento['data']),
-                        'hora_inicio' => $agendamento['hora_inicio'],
-                        'hora_fim' => $horaFim->format('H:i:s.u'),
+                        'hora_inicio' => $horaInicio->format('H:i:s'),
+                        'hora_fim' => $horaFim->format('H:i:s'),
                         'funcionarios_id' => $funcionario->id,
                         'servicos_id' => $servico->id,
                         'status' => 1,
@@ -84,8 +85,8 @@ class FetchAgendamentos implements ShouldQueue
                     Agendamentos::create([
                         'id' => $id,
                         'data' => $this->formatarData($agendamento['data']),
-                        'hora_inicio' => $agendamento['hora_inicio'],
-                        'hora_fim' => $horaFim->format('H:i:s.u'),
+                        'hora_inicio' => $horaInicio->format('H:i:s'),
+                        'hora_fim' => $horaFim->format('H:i:s'),
                         'funcionarios_id' => $funcionario->id,
                         'status' => 1,
                         'servicos_id' => $servico->id,

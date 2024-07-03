@@ -53,6 +53,7 @@ Route::put('/categoriasservicos/{id}', 'App\Http\Controllers\CategoriasServicosC
 // Rotas para jornadas
 Route::get('/jornadas', 'App\Http\Controllers\JornadasController@index')->name('jornadas.index');
 Route::get('/jornadas/create/{id?}', 'App\Http\Controllers\JornadasController@create')->name('jornadas.create');
+Route::get('/jornadas/{nome?}', 'App\Http\Controllers\JornadasController@dados')->name('jornadas.dados');
 Route::delete('/jornadas/{id}', 'App\Http\Controllers\JornadasController@delete')->name('jornadas.delete');
 Route::post('/jornadas', 'App\Http\Controllers\JornadasController@store')->name('jornadas.store');
 Route::put('/jornadas/{id}', 'App\Http\Controllers\JornadasController@update')->name('jornadas.update');

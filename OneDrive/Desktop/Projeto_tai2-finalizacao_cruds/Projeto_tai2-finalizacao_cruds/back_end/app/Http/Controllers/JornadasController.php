@@ -17,6 +17,14 @@ class JornadasController extends Controller
             return $next($request);
         });
     }
+    public function dados($nome)
+    {
+        $userId = 1; // teste, lembrar de mudar quando login voltar
+        $funcionario = Funcionarios::where('nome', $nome)->first();
+        $jornadas = Jornadas::where('users_id', $userId)->where('funcionarios_id', $funcionario->id)->where('operacao', 0)->get();
+
+        return response()->json($jornadas);
+    }
 
     public function index()
     {

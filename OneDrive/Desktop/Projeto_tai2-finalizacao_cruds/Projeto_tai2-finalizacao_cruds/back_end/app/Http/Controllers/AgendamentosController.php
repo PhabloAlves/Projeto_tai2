@@ -18,32 +18,32 @@ class AgendamentosController extends Controller
     {
         return view('site.agendamentos.index');
     }
-
+    
     public function dados()
-    {
-        $userId = 1; // teste, lembrar de mudar quando login voltar
-        $agendamentos = Agendamentos::where('users_id', $userId)->orderBy('data', 'asc')->get();
-        $agendamentosFormatados = [];
+{
+    $userId = 1; // teste, lembrar de mudar quando login voltar
+    $agendamentos = Agendamentos::where('users_id', $userId)->orderBy('data', 'asc')->get();
+    $agendamentosFormatados = [];
 
-        foreach ($agendamentos as $agendamento) {
-            $servico = Servicos::find($agendamento->servicos_id);
-            $funcionario = Funcionarios::find($agendamento->funcionarios_id);
-            $agendamentoFormatado = [
-                'Data' => $agendamento->data->format('d/m/Y'),
-                'hora_inicio' => $agendamento->hora_inicio->format('H:i'),
-                'hora_fim' => $agendamento->hora_fim->format('H:i'),
-                'Cliente' => $agendamento->nome_cliente, // Supondo que você tenha um campo 'nome_cliente'
-                'Nome' => $servico ? $servico->nome_servico : 'Serviço não encontrado',
-                'Funcionario' => $funcionario->nome,
-                'Status' => $agendamento->status,
-                'Valor' => $servico ? $servico->valor : 0,
-            ];
+    foreach ($agendamentos as $agendamento) {
+        $servico = Servicos::find($agendamento->servicos_id);
+        $funcionario = Funcionarios::find($agendamento->funcionarios_id);
+        $agendamentoFormatado = [
+            'Data' => $agendamento->data->format('d/m/Y'),
+            'hora_inicio' => $agendamento->hora_inicio->format('H:i'),
+            'hora_fim' => $agendamento->hora_fim->format('H:i'),
+            'Cliente' => $agendamento->nome_cliente, // Supondo que você tenha um campo 'nome_cliente'
+            'Nome' => $servico ? $servico->nome_servico : 'Serviço não encontrado',
+            'Funcionario' => $funcionario->nome,
+            'Status' => $agendamento->status,
+            'Valor' => $servico ? $servico->valor : 0,
+        ];
 
-            $agendamentosFormatados[] = $agendamentoFormatado;
-        }
-
-        return response()->json($agendamentosFormatados);
+        $agendamentosFormatados[] = $agendamentoFormatado;
     }
+
+    return response()->json($agendamentosFormatados);
+}
 
 
 
