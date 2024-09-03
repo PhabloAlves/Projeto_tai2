@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 //agenda
 Route::get('/agendamentos', 'App\Http\Controllers\agendamentosController@index');
 
+
 // Rotas para users
 Route::get('/users', 'App\Http\Controllers\UsersController@index');
 Route::get('/users_dados', 'App\Http\Controllers\UsersController@show_dados');

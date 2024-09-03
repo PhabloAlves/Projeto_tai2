@@ -17,6 +17,63 @@ class JornadasController extends Controller
             return $next($request);
         });
     }
+    public function filtros(Request $request)
+    {
+        $id = 1; // teste, lembrar de mudar quando login voltar
+        $empresa = Empresas::where('users_id', $id)->first();
+    
+        // Inicia a query base
+        $query = Jornadas::join('funcionarios', 'funcionarios.id', 'jornadas.funcionarios_id')
+                         ->where('jornadas.empresas_id', $empresa->id)
+                         ->select(
+                             'jornadas.id',
+                             'jornadas.diaMes',
+                             'jornadas.horaInicio',
+                             'jornadas.horaFim',
+                             'jornadas.operacao',
+                             'funcionarios.nome',
+                             'funcionarios.sobrenome'
+                         );
+    
+        // Aplica os filtros se presentes na requisição
+        if ($request->has('funcionarios_id')) {
+            $query->where('jornadas.funcionarios_id', $request->input('funcionarios_id'));
+        }
+    
+        if ($request->has('diaMes')) {
+            $query->whereDate('jornadas.diaMes', $request->input('diaMes'));
+        }
+    
+        if ($request->has('operacao')) {
+            $query->where('jornadas.operacao', $request->input('operacao'));
+        }
+    
+        // Ordena os resultados pela data (diaMes) em ordem decrescente
+        $query->orderBy('jornadas.diaMes', 'desc');
+    
+        // Executa a query e obtém os resultados
+        $jornadas = $query->get();
+    
+        // Mapeia os valores de 'operacao'
+        $operacao = [
+            'Adição',
+            'Subtração',
+        ];
+    
+        // Formata os resultados
+        foreach ($jornadas as &$jornada) {
+            if ($jornada->diaMes != null) {
+                $jornada->dia = $jornada->diaMes->format('d/m/Y');
+            }
+            $jornada->operacao = $operacao[$jornada->operacao];
+        }
+    
+        // Retorna os resultados como JSON
+        return response()->json($jornadas);
+    }
+    
+
+
     public function dados($nome)
     {
         $userId = 1; // teste, lembrar de mudar quando login voltar

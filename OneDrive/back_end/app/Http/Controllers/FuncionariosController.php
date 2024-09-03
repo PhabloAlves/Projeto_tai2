@@ -35,6 +35,21 @@ class FuncionariosController extends Controller
 
         return response($funcionarios);
     }
+    public function filtros(Request $request)
+    {
+        $id = 1; // teste, lembrar de mudar quando login voltar
+        $empresa = Empresas::where('users_id', $id)->first();
+
+
+        $nomeFiltro = $request->input('nome');
+
+
+        $funcionarios = Funcionarios::where('empresas_id', $empresa->id)
+            ->where('nome', 'like', '%' . $nomeFiltro . '%')
+            ->get();
+
+        return response()->json($funcionarios);
+    }
 
     public function create($id = null)
     {
