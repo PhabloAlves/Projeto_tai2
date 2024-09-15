@@ -168,6 +168,7 @@
   top: 50%;
   transform: translateY(-50%);
 }
+
 .sidebar .profile-details{
   bottom: 0;
   width: 260px;
@@ -362,7 +363,7 @@ tbody {
 }
 
 .select2-selection__choice {
-  background-color: #3f60d7 !important; /* Cor de fundo personalizada */
+  background-color: #000000 !important; /* Cor de fundo personalizada */
   color: white !important; /* Cor do texto personalizada */
 }
 .select2-selection__choice__remove {

@@ -24,46 +24,36 @@
 
   <div class="container">
     <div class="wrapper">
-      <form method="POST" action="{{ route('login') }}>
+      <form method="POST" action="{{ route('login') }}">
       @csrf
       
         <img class="logo" src="{{ url ('Assets/Images/logofull.png')}}" alt="">
         <h2>Acesso ao sistema</h2>
 
-          <!-- Email Address -->
+        <!-- Email Address -->
         <div class="input-field">
-        <input type="text" required>
-        <label>
-        <x-label for="email" :value="__('Email')" />
-          <x-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus />
-        </label>
-          
+            <input type="email" id="email" required>
+            <label for="email">Email</label>
         </div>
 
         <!-- Password -->
         <div class="input-field">
-        <input type="password" required>
-        <label>
-        <x-label for="password" :value="__('Password')" />
-          <x-input id="password"
-                type="password"
-                name="password"
-                required autocomplete="current-password" />
-        </label>
+            <input type="password" id="password" required>
+            <label for="password">Senha</label>
         </div>
 
         <!-- Remember Me -->
         <div class="forget">
           <label for="remember_me" class="inline-flex items-center">
                   <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200focus:ring-opacity-50" name="remember">
-                  <span class="ml-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
+                  <span class="ml-2 text-sm text-gray-600">{{ __('Lembre-me') }}</span>
             </label>
 
 
             <div class="flex items-center justify-end mt-4">
                 @if (Route::has('password.request'))
                     <a class="underline text-sm text-gray-600 hover:text-gray-900" href="{{ route('password.request') }}">
-                        {{ __('Forgot your password?') }}
+                        {{ __('Esqueceu a senha?') }}
                     </a>
                 @endif
             </div>

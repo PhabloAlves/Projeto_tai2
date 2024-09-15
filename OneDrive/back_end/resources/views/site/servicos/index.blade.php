@@ -32,13 +32,25 @@
                 <table class="table">
                     <thead>
                         <tr>
-                            <th>Categoria de Serviço</th>
-                            <th>Serviço</th>
+                            <th>
+                                Categoria de Serviço
+                                <select id="categoria-filter-select" class="form-select">
+                                    <option value="">Todas</option>
+                                    <!-- Opções serão inseridas dinamicamente -->
+                                </select>
+                            </th>
+                            <th>
+                                Serviço
+                                <select id="servico-filter-select" class="form-select">
+                                    <option value="">Todos</option>
+                                    <!-- Opções serão inseridas dinamicamente -->
+                                </select>
+                            </th>
                             <th>Valor</th>
                             <th>Ações</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="servico-table-body">
                         @foreach($servicos as $servico)
                         <tr>
                             <td>{{ $servico->nome_categoria }}</td>
@@ -60,4 +72,96 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        var allData = []; // Armazena todos os dados dos serviços
+
+        // Função para filtrar e renderizar a tabela com base nos filtros selecionados
+        function filterAndRenderTable(selectedCategoria, selectedServico) {
+    var filteredData = allData;
+
+    // Filtrar por categoria de serviço
+    if (selectedCategoria) {
+        filteredData = filteredData.filter(function(servico) {
+            return servico.categoria_servico === selectedCategoria; // Atualize aqui
+        });
+    }
+
+    // Filtrar por serviço
+    if (selectedServico) {
+        filteredData = filteredData.filter(function(servico) {
+            return servico.nome_servico === selectedServico;
+        });
+    }
+
+    var tableBody = $('#servico-table-body');
+    tableBody.empty();
+
+    filteredData.forEach(function(servico) {
+        var row = `<tr>
+            <td>${servico.categoria_servico}</td> <!-- Atualize aqui -->
+            <td>${servico.nome_servico}</td>
+            <td>R$ ${servico.valor.replace('.', ',')}</td>
+            <td>
+                <a href="/servicos/create/${servico.id}" target="_blank" class="text-primary"><i class="fas fa-edit"></i></a>
+                <form action="/servicos/delete/${servico.id}" method="POST" style="display: inline;">
+                    <input type="hidden" name="_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="_method" value="DELETE">
+                    <button type="submit" style="border: none; background-color: transparent;" class="text-primary"><i style="color: red;" class="fas fa-trash"></i></button>
+                </form>
+            </td>
+        </tr>`;
+
+        tableBody.append(row);
+    });
+}
+
+
+        // Carregar dados via AJAX
+        $.ajax({
+            url: '/servicos_dados',
+            method: 'GET',
+            dataType: 'json',
+            success: function(data) {
+                console.log(data); // Verifique os dados recebidos
+                allData = data;
+
+                // Renderizar a tabela inicial com todos os dados
+                filterAndRenderTable();
+
+                // Obter todas as opções únicas para preencher os selects
+                var uniqueCategorias = [...new Set(data.map(item => item.nome_categoria))];
+                var uniqueServicos = [...new Set(data.map(item => item.nome_servico))];
+
+                // Preencher o select de categorias
+                uniqueCategorias.forEach(function(categoria) {
+                    var option = `<option value="${categoria}">${categoria}</option>`;
+                    $('#categoria-filter-select').append(option);
+                });
+
+                // Preencher o select de serviços
+                uniqueServicos.forEach(function(servico) {
+                    var option = `<option value="${servico}">${servico}</option>`;
+                    $('#servico-filter-select').append(option);
+                });
+
+                // Eventos de mudança nos filtros
+                $('#categoria-filter-select').on('change', function() {
+                    var selectedCategoria = $(this).val();
+                    filterAndRenderTable(selectedCategoria, $('#servico-filter-select').val());
+                });
+
+                $('#servico-filter-select').on('change', function() {
+                    var selectedServico = $(this).val();
+                    filterAndRenderTable($('#categoria-filter-select').val(), selectedServico);
+                });
+            },
+            error: function(jqXHR, textStatus, errorThrown) {
+                console.log('Erro ao buscar os dados: ' + textStatus);
+            }
+        });
+    });
+</script>
+
 @endsection

@@ -1,5 +1,32 @@
 @import url("https://fonts.googleapis.com/css2?family=Open+Sans:wght@200;300;400;500;600;700&display=swap");
 
+
+/* Remover o preenchimento automático azul */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus {
+    background-color: transparent !important;
+    color: #fff !important;
+    box-shadow: 0 0 0px 1000px transparent inset !important;
+    -webkit-text-fill-color: #fff !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Ajustar a animação da label quando o campo é preenchido ou focado */
+.input-field input:focus ~ label,
+.input-field input:valid ~ label,
+input:-webkit-autofill ~ label {
+    font-size: 0.8rem;
+    top: 10px;
+    transform: translateY(-120%);
+}
+
+/* Estilo de foco */
+.input-field input:focus {
+    border-bottom: 2px solid #fff;
+}
+
+
 * {
   margin: 0;
   padding: 0;
@@ -122,7 +149,7 @@ h2 {
   top: 50%;
   left: 0;
   transform: translateY(-50%);
-  color: #fff;
+  color: #c9c9c9;
   font-size: 16px;
   pointer-events: none;
   transition: 0.15s ease;
@@ -145,6 +172,7 @@ h2 {
   transform: translateY(-120%);
 }
 
+/* Estilo original sem animação */
 .forget {
   display: flex;
   align-items: center;
@@ -152,7 +180,6 @@ h2 {
   margin: 25px 0 35px 0;
   color: #fff;
 }
-
 #remember {
   accent-color: #fff;
 }
