@@ -33,10 +33,9 @@ class Empresas extends Model
     public static function validate($data)
     {
         return Validator::make($data, [
-            'id' => 'required|integer|exists:usuarios,id',
             'identificacao' => 'required|string|max:150',
-            'razao_social' => 'nullable|string|max:150',
-            'tipo_inscricao' => 'nullable|integer|min:1|max:2',
+            'razaoSocial' => 'nullable|string|max:150',
+            'tipoInscricao' => 'nullable|integer|min:1|max:2',
             'inscricao' => 'nullable|integer',
             'email' => 'nullable|email|max:100',
             'telefone' => 'nullable|string|max:20',
@@ -45,11 +44,10 @@ class Empresas extends Model
             'cep' => 'required|integer',
             'cidade' => 'required|string|max:50',
             'uf' => 'required|string|size:2',
-            'created_at' => 'required|integer',
         ], [
             'identificacao.required' => 'O campo Identificação é obrigatório.',
             'identificacao.max' => 'O campo Identificação deve ter no máximo :max caracteres.',
-            'razao_social.max' => 'O campo Razão Social deve ter no máximo :max caracteres.',
+            'razaoSocial.max' => 'O campo Razão Social deve ter no máximo :max caracteres.',
             'inscricao.integer' => 'O campo Inscrição deve ser um número inteiro.',
             'email.email' => 'O campo E-mail deve ser um endereço de e-mail válido.',
             'email.max' => 'O campo E-mail deve ter no máximo :max caracteres.',

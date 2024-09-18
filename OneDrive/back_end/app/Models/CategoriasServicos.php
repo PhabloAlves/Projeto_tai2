@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 
 class CategoriasServicos extends Model
 {
@@ -19,6 +20,16 @@ class CategoriasServicos extends Model
         'users_id',
         'nome_categoria',
     ];
+
+    public static function validate($data)
+    {
+        return Validator::make($data, [
+            'nome_categoria' => 'required|string|max:100',
+        ], [
+            'nome_categoria.required' => 'O campo nome categoria é obrigatório.',
+            'nome_categoria.max' => 'O campo nome categoria deve ter no máximo :max caracteres.',
+        ]);
+    }
 
     /**
      * The attributes that should be cast to native types.

@@ -28,9 +28,9 @@ Route::put('/funcionarios/{id}', 'App\Http\Controllers\FuncionariosController@up
 Route::delete('/funcionarios/{id}', 'App\Http\Controllers\FuncionariosController@delete')->name('funcionarios.delete');
 
 // Rotas para serviços
-Route::get('/servicos', 'App\Http\Controllers\ServicosController@index')->name('servicos.index');
+Route::get('/servicos/{idcategoria?}/{idservico?}', 'App\Http\Controllers\ServicosController@index')->name('servicos.index');
 Route::get('/servicos/create/{id?}', 'App\Http\Controllers\ServicosController@create')->name('servicos.create');
-Route::get('/servicos_dados', 'App\Http\Controllers\ServicosController@dados')->name('servicos.dados');
+// Route::get('/servicos_dados', 'App\Http\Controllers\ServicosController@dados')->name('servicos.dados');
 Route::delete('/servicos/{id}', 'App\Http\Controllers\ServicosController@delete')->name('servicos.delete');
 Route::post('/servicos', 'App\Http\Controllers\ServicosController@store')->name('servicos.store');
 Route::put('/servicos/{id}', 'App\Http\Controllers\ServicosController@update')->name('servicos.update');

@@ -38,13 +38,13 @@ class CategoriasServicosController extends Controller
 
     public function store(Request $request)
     {
-        // $validator = CategoriasServicos::validate($request->all());
+        $validator = CategoriasServicos::validate($request->all());
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $empresa = Empresas::where('users_id', 1)->first();
 
@@ -65,13 +65,13 @@ class CategoriasServicosController extends Controller
     {
         $categoria = CategoriasServicos::findOrFail($id);
 
-        // $validator = CategoriasServicos::validate($request->all());
+        $validator = CategoriasServicos::validate($request->all());
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $categoria->update([
             'nome_categoria' => $request->input('nome_categoria'),

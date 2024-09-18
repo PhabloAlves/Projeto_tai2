@@ -21,20 +21,34 @@ class ServicosController extends Controller
     {
         $id = 1; //teste, lembrar de mudar quando login voltar
         $empresa = Empresas::where('users_id', $id)->first();
-        $servicos = Servicos::join('categorias_servicos', 'categorias_servicos.id', 'servicos.categorias_servicos_id')
-            ->where('servicos.empresas_id', $empresa->id)->get();
+        $selectServicos = Servicos::where('empresas_id', $empresa->id)->get();
+        $selectCategorias = CategoriasServicos::where('empresas_id', $empresa->id)->get();
 
-        return view('site.servicos.index', compact('servicos'));
+        $servicos = Servicos::select(
+            'servicos.id',
+            'servicos.nome_servico',
+            'categorias_servicos.nome_categoria',
+            'servicos.valor',
+            'servicos.duracao'
+        )
+            ->join('categorias_servicos', 'categorias_servicos.id', 'servicos.categorias_servicos_id')
+            ->where('servicos.empresas_id', $empresa->id)
+            ->orderBy('categorias_servicos.nome_categoria', 'asc')
+            ->orderBy('servicos.nome_servico', 'asc')
+            ->orderBy('servicos.valor', 'asc')
+            ->get();
+
+        return view('site.servicos.index', compact('servicos', 'selectServicos', 'selectCategorias'));
     }
 
-    public function dados()
-    {
-        $id = 1; //teste, lembrar de mudar quando login voltar
-        $empresa = Empresas::where('users_id', $id)->first();
-        $servicos = Servicos::where('empresas_id', $empresa->id)->get();
+    // public function dados()
+    // {
+    //     $id = 1; //teste, lembrar de mudar quando login voltar
+    //     $empresa = Empresas::where('users_id', $id)->first();
+    //     $servicos = Servicos::where('empresas_id', $empresa->id)->get();
 
-        return response($servicos);
-    }
+    //     return response($servicos);
+    // }
 
     public function create($id = null)
     {
@@ -53,13 +67,13 @@ class ServicosController extends Controller
 
     public function store(Request $request)
     {
-        // $validator = Servicos::validate($request->all());
+        $validator = Servicos::validate($request->all());
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $empresa = Empresas::where('users_id', 1)->first();
 
@@ -82,13 +96,13 @@ class ServicosController extends Controller
     {
         $servico = Servicos::findOrFail($id);
 
-        // $validator = Servicos::validate($request->all());
+        $validator = Servicos::validate($request->all());
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $servico->update([
             'categorias_servicos_id' => $request->input('categoria_id'),

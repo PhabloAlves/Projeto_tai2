@@ -16,13 +16,13 @@ class EmpresasController extends Controller
 
     public function store(Request $request)
     {
-        // $validator = Empresas::validate($request->all());
+        $validator = Empresas::validate($request->all());
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $empresa = new Empresas();
         $empresa->users_id = 1;
@@ -47,6 +47,14 @@ class EmpresasController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validator = Empresas::validate($request->all());
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $empresa = Empresas::findOrFail($id);
 
         $empresa->update([

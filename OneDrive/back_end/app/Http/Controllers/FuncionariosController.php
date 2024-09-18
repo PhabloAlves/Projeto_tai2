@@ -35,21 +35,22 @@ class FuncionariosController extends Controller
 
         return response($funcionarios);
     }
-    public function filtros(Request $request)
-    {
-        $id = 1; // teste, lembrar de mudar quando login voltar
-        $empresa = Empresas::where('users_id', $id)->first();
+
+    // public function filtros(Request $request)
+    // {
+    //     $id = 1; // teste, lembrar de mudar quando login voltar
+    //     $empresa = Empresas::where('users_id', $id)->first();
 
 
-        $nomeFiltro = $request->input('nome');
+    //     $nomeFiltro = $request->input('nome');
 
 
-        $funcionarios = Funcionarios::where('empresas_id', $empresa->id)
-            ->where('nome', 'like', '%' . $nomeFiltro . '%')
-            ->get();
+    //     $funcionarios = Funcionarios::where('empresas_id', $empresa->id)
+    //         ->where('nome', 'like', '%' . $nomeFiltro . '%')
+    //         ->get();
 
-        return response()->json($funcionarios);
-    }
+    //     return response()->json($funcionarios);
+    // }
 
     public function create($id = null)
     {
@@ -68,13 +69,13 @@ class FuncionariosController extends Controller
 
     public function store(Request $request)
     {
-        // $validator = Funcionarios::validate($request->all());
+        $validator = Funcionarios::validate($request->all());
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $empresa = Empresas::where('users_id', 1)->first();
 
@@ -100,13 +101,17 @@ class FuncionariosController extends Controller
     {
         $funcionario = Funcionarios::findOrFail($id);
 
-        // $validator = Funcionarios::validate($request->all());
+        $validator = Funcionarios::validate($request->all());
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        echo '<pre>';
+        print_r($validator->fails());
+        die;
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $funcionario->update([
             'nome' => $request->input('nome'),

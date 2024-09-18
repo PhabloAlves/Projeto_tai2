@@ -14,6 +14,14 @@ use Carbon\Carbon;
 
 class AgendamentosController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            view()->share('jsFile', 'agendamentos.js');
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         return view('site.agendamentos.index');

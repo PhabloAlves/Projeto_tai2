@@ -2,7 +2,7 @@
 
 @section('title', 'Serviços - Marca Aí')
 
-@section('header', 'Cadastro | Serviços')
+@section('header', 'Novo | Serviços')
 
 @section('content')
 <div class="container-fluid mt-5">

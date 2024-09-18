@@ -7,7 +7,7 @@ $(document).ready(function () {
             url: $(this).attr('action'),
             data: $(this).serialize(),
             success: function (response) {
-                window.close();
+                // window.close();
             }
         });
     });

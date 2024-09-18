@@ -31,25 +31,21 @@ class Funcionarios extends Model
     public static function validate($data)
     {
         return Validator::make($data, [
-            'id' => 'required|integer',
-            'empresas_id' => 'required|integer',
-            'users_id' => 'required|integer',
             'nome' => 'required|string|max:100',
             'sobrenome' => 'required|string|max:100',
-            'data_nascimento' => 'required|date',
-            'tipo_inscricao' => 'required|integer|between:1,2',
+            'dataNascimento' => 'required|date',
+            'tipoInscricao' => 'required|integer|between:1,2',
             'inscricao' => 'required|string|max:18',
             'telefone' => 'required|string|max:20',
         ], [
-            'id.required' => 'O campo id é obrigatório.',
-            'empresas_id.required' => 'O campo empresas_id é obrigatório.',
-            'users_id.required' => 'O campo users_id é obrigatório.',
             'nome.required' => 'O campo nome é obrigatório.',
+            'nome.max' => 'O campo nome deve ter no máximo :max caracteres.',
             'sobrenome.required' => 'O campo sobrenome é obrigatório.',
-            'data_nascimento.required' => 'O campo data de nascimento é obrigatório.',
-            'tipo_inscricao.required' => 'O campo tipo de inscrição é obrigatório.',
+            'sobrenome.max' => 'O campo sobrenome deve ter no máximo :max caracteres.',
+            'dataNascimento.required' => 'O campo data de nascimento é obrigatório.',
             'inscricao.required' => 'O campo inscrição é obrigatório.',
             'telefone.required' => 'O campo telefone é obrigatório.',
+            'telefone.max' => 'O campo Telefone deve ter no máximo :max caracteres.',
         ]);
     }
 
