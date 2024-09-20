@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\Auth\AuthenticatedSessionController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -20,3 +22,6 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 Route::post('/agendamentos-filtro', 'App\Http\Controllers\AgendamentosController@filtros');
 Route::post('/funcionarios-filtro', 'App\Http\Controllers\FuncionariosController@filtros');
 Route::post('/jornadas-filtro', 'App\Http\Controllers\JornadasController@filtros');
+Route::post('/login', 'App\Http\Controllers\AuthController@login');
+Route::post('/register', 'App\Http\Controllers\AuthController@register');
+Route::put('/agendamentos-status/{id}', 'App\Http\Controllers\AgendamentosController@updateStatus');

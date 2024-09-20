@@ -238,6 +238,16 @@ class AgendamentosController extends Controller
         return redirect()->back()->with('success', 'Agendamento atualizada com sucesso!');
     }
 
+    public function updateStatus(Request $request, $id)
+    {
+        $agendamento = Agendamentos::findOrFail($id);
+        $agendamento->fill($request->all());
+        $agendamento->save();
+
+        
+        return response()->json($agendamento, 200);
+    }
+
 
     public function filtros(Request $request)
     {
