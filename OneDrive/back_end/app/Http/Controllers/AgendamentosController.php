@@ -143,12 +143,12 @@ class AgendamentosController extends Controller
         } else {
             // Verificar se existe jornada no dia da semana se não houver no dia específico
             $jornadasDiaSemana = Jornadas::where('funcionarios_id', $postdata['funcionario_id'])
-                ->where('diaSemana', 'like', "%$diaSemana%")
+                ->where('diaSemana', $diaSemana)
                 ->exists();
 
             if ($jornadasDiaSemana) {
                 $jornadaHorario = Jornadas::where('funcionarios_id', $postdata['funcionario_id'])
-                    ->where('diaSemana', 'like', "%$diaSemana%")
+                    ->where('diaSemana', $diaSemana)
                     ->where(function ($query) use ($postdata) {
                         $query->where('horaInicio', '<=', $postdata['horaInicio'])
                             ->where('horaFim', '>=', $postdata['horaFim']);
@@ -157,7 +157,7 @@ class AgendamentosController extends Controller
 
                 // Verificar se há uma operação de subtração que interfere no horário
                 $operacaoSubtracaoDiaSemana = Jornadas::where('funcionarios_id', $postdata['funcionario_id'])
-                    ->where('diaSemana', 'like', "%$diaSemana%")
+                    ->where('diaSemana', $diaSemana)
                     ->where('operacao', 1) // operação = 1 para subtração
                     ->where(function ($query) use ($postdata) {
                         $query->where('horaInicio', '<=', $postdata['horaFim'])
@@ -244,7 +244,7 @@ class AgendamentosController extends Controller
         $agendamento->fill($request->all());
         $agendamento->save();
 
-        
+
         return response()->json($agendamento, 200);
     }
 
@@ -253,7 +253,7 @@ class AgendamentosController extends Controller
     {
         $userId = 1;
 
-  
+
         $query = Agendamentos::query()->where('users_id', $userId);
 
         if ($request->filled('servicos_id')) {

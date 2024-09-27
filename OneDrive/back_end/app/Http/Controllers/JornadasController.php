@@ -21,45 +21,45 @@ class JornadasController extends Controller
     {
         $id = 1; // teste, lembrar de mudar quando login voltar
         $empresa = Empresas::where('users_id', $id)->first();
-    
+
         // Inicia a query base
         $query = Jornadas::join('funcionarios', 'funcionarios.id', 'jornadas.funcionarios_id')
-                         ->where('jornadas.empresas_id', $empresa->id)
-                         ->select(
-                             'jornadas.id',
-                             'jornadas.diaMes',
-                             'jornadas.horaInicio',
-                             'jornadas.horaFim',
-                             'jornadas.operacao',
-                             'funcionarios.nome',
-                             'funcionarios.sobrenome'
-                         );
-    
+            ->where('jornadas.empresas_id', $empresa->id)
+            ->select(
+                'jornadas.id',
+                'jornadas.diaMes',
+                'jornadas.horaInicio',
+                'jornadas.horaFim',
+                'jornadas.operacao',
+                'funcionarios.nome',
+                'funcionarios.sobrenome'
+            );
+
         // Aplica os filtros se presentes na requisição
         if ($request->has('funcionarios_id')) {
             $query->where('jornadas.funcionarios_id', $request->input('funcionarios_id'));
         }
-    
+
         if ($request->has('diaMes')) {
             $query->whereDate('jornadas.diaMes', $request->input('diaMes'));
         }
-    
+
         if ($request->has('operacao')) {
             $query->where('jornadas.operacao', $request->input('operacao'));
         }
-    
+
         // Ordena os resultados pela data (diaMes) em ordem decrescente
         $query->orderBy('jornadas.diaMes', 'desc');
-    
+
         // Executa a query e obtém os resultados
         $jornadas = $query->get();
-    
+
         // Mapeia os valores de 'operacao'
         $operacao = [
             'Adição',
             'Subtração',
         ];
-    
+
         // Formata os resultados
         foreach ($jornadas as &$jornada) {
             if ($jornada->diaMes != null) {
@@ -67,11 +67,11 @@ class JornadasController extends Controller
             }
             $jornada->operacao = $operacao[$jornada->operacao];
         }
-    
+
         // Retorna os resultados como JSON
         return response()->json($jornadas);
     }
-    
+
 
 
     public function dados($nome)
@@ -92,6 +92,7 @@ class JornadasController extends Controller
             ->select(
                 'jornadas.id',
                 'jornadas.diaMes',
+                'jornadas.diaSemana',
                 'jornadas.horaInicio',
                 'jornadas.horaFim',
                 'jornadas.operacao',
@@ -105,10 +106,22 @@ class JornadasController extends Controller
             'Subtração',
         ];
 
+        $diasSemana = [
+            0 => 'Domingo',
+            1 => 'Segunda-Feira',
+            2 => 'Terça-Feira',
+            3 => 'Quarta-Feira',
+            4 => 'Quinta-Feira',
+            5 => 'Sexta-Feira',
+            6 => 'Sábado',
+        ];
+
         foreach ($jornadas as &$jornada) {
             if ($jornada->diaMes != null) {
                 $jornada->dia = $jornada->diaMes->format('d/m/Y');
-            } 
+            } else {
+                $jornada->dia = $diasSemana[$jornada->diaSemana];
+            }
             $jornada->operacao = $operacao[$jornada->operacao];
             // $jornada->horaIni = $jornada->horaInicio->format('H:i');
             // $jornada->horaF = $jornada->horaFim->format('H:i');
@@ -160,6 +173,7 @@ class JornadasController extends Controller
                 $jornada->horaInicio = $postdata['horaInicio'];
                 $jornada->horaFim = $postdata['horaFim'];
                 $jornada->operacao = $postdata['operacao'];
+                $jornada->diaSemana = $diaSemana;
                 $jornada->diaMes = null;
 
                 $jornada->save();
@@ -172,6 +186,7 @@ class JornadasController extends Controller
             $jornada->horaInicio = $postdata['horaInicio'];
             $jornada->horaFim = $postdata['horaFim'];
             $jornada->operacao = $postdata['operacao'];
+            $jornada->diaSemana = null;
             $jornada->diaMes = $postdata['diaMes'];
 
             $jornada->save();

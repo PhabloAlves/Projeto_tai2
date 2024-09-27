@@ -8,6 +8,14 @@ use Psy\Readline\Hoa\_Protocol;
 
 class EmpresasController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware(function ($request, $next) {
+            view()->share('jsFile', 'empresas.js');
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         $empresa = Empresas::where('users_id', 1)->first() ?? new Empresas();
