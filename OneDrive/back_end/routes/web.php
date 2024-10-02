@@ -2,9 +2,11 @@
 
 use Illuminate\Support\Facades\Route;
 
-//agenda
+// Rotas que requerem autenticação
+Route::group(['middleware' => 'auth'], function () {
+    
+    //agenda
 Route::get('/agendamentos', 'App\Http\Controllers\agendamentosController@index');
-
 
 // Rotas para users
 Route::get('/users', 'App\Http\Controllers\UsersController@index');
@@ -113,9 +115,23 @@ Route::get('/ajuda', function () {
     return view('site.ajuda.index');
 });
 
-Route::get('/configuracoes', function () {
-    return view('site.configuracoes.index');
+//Route::get('/configuracoes', function () {
+//    return view('site.configuracoes.index');
+//});
+
+    
 });
+
+
+
+// Definindo rota de login para lidar com solicitações do navegador que requerem estado (stateful)
+Route::get('/login', function () {
+    return view('auth.login');
+})->name('login');
+
+Route::post('/login', [App\Http\Controllers\AuthController::class, 'login'])->name('login.post');
+
+Route::post('/login', [App\Http\Controllers\AuthController::class, 'loginWeb'])->name('login.post');
 
 
 

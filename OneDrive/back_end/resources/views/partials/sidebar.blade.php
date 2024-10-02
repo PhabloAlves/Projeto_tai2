@@ -10,10 +10,19 @@
                     <img src="{{ url('Assets/Images/user.png') }}" alt="profileImg">
                 </div>
                 <div class="name-job">
-                    <div class="profile_name">Usuário</div>
-                    <div class="job">Serviço</div>
+                    @if(Auth::check())
+                        <div class="profile_name">{{ Auth::user()->name }}</div>
+                    @else
+                        <div class="profile_name">Usuário</div>
+                    @endif
+                <div class="job">Serviço</div>
                 </div>
-                <i class='bx bx-log-out'></i>
+                <form action="{{ route('logout') }}" method="POST" style="display: inline;">
+                    @csrf
+                    <button type="submit" style="border: none; background: transparent; cursor: pointer;">
+                        <i class='bx bx-log-out' title="Logout"></i>
+                    </button>
+                </form>
             </div>
         </li>
         <hr>
@@ -45,7 +54,8 @@
                 <li><a class="link_name" href="#">Agendamento</a></li>
             </ul>
         </li>
-        <li class="{{ request()->is('configuracoes') ? 'active' : '' }}">
+        
+      <!--  <li class="{{ request()->is('configuracoes') ? 'active' : '' }}">
             <a href="{{ url('configuracoes') }}">
                 <i class='bx bx-cog'></i>
                 <span class="link_name">Configurações</span>
@@ -54,6 +64,8 @@
                 <li><a class="link_name" href="#">Configurações</a></li>
             </ul>
         </li>
+     -->
+        
         <li class="{{ request()->is('ajuda') ? 'active' : '' }}">
             <a href="{{ url('ajuda') }}">
                 <i class='bx bx-help-circle'></i>

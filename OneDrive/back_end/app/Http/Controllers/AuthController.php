@@ -7,6 +7,7 @@ use App\Models\Doadores;
 use App\Models\Movimentacoes;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Validation\Rules\Password as PasswordRule;
@@ -101,6 +102,23 @@ class AuthController extends Controller
     }
 
    
+    public function loginWeb(Request $request)
+{
+    $credentials = $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+    ]);
+
+    if (Auth::attempt($credentials, $request->remember)) {
+        $request->session()->regenerate();
+
+        return redirect()->intended('dashboard'); // Redirecionar para a página desejada
+    }
+
+    return back()->withErrors([
+        'email' => 'As credenciais fornecidas não correspondem aos nossos registros.',
+    ])->onlyInput('email');
+}
 
    
 }

@@ -21,7 +21,7 @@ class AgendamentosController extends Controller
 
     public function dados()
     {
-        $userId = 1; // teste, lembrar de mudar quando login voltar
+        $userId = Auth::id(); // teste, lembrar de mudar quando login voltar = 1 para teste, = Auth::id(); para login
         $agendamentos = Agendamentos::where('users_id', $userId)->orderBy('data', 'asc')->get();
         $agendamentosFormatados = [];
 
@@ -50,7 +50,7 @@ class AgendamentosController extends Controller
 
     // public function index_by_user()
     // {
-    //     $userId = 1; //teste, lembrar de mudar quando login voltar
+    //     $userId = Auth::id(); //teste, lembrar de mudar quando login voltar
     //     $agendamentos = Agendamentos::where('users_id', $userId)->get();
     //     $agendamentosFormatados = [];
 
@@ -251,7 +251,7 @@ class AgendamentosController extends Controller
 
     public function filtros(Request $request)
     {
-        $userId = 1;
+        $userId = Auth::id();
 
   
         $query = Agendamentos::query()->where('users_id', $userId);

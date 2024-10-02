@@ -17,7 +17,7 @@ class UsersController extends Controller
 
     public function show_dados()
     {
-        $userId = 1; //teste, lembrar de mudar quando login voltar
+        $userId = Auth::id(); //teste, lembrar de mudar quando login voltar
         $user = User::find($userId);
         $userFormatado = [];
         $userFormatado = [[

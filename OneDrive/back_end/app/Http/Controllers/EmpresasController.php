@@ -25,7 +25,7 @@ class EmpresasController extends Controller
         // }
 
         $empresa = new Empresas();
-        $empresa->users_id = 1;
+        $empresa->users_id = Auth::id();
         $empresa->identificacao = $request->input('identificacao');
         $empresa->razao_social = $request->input('razaoSocial');
         $empresa->tipo_inscricao = $request->input('tipoInscricao');

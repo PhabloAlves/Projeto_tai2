@@ -25,30 +25,29 @@
   <div class="container">
     <div class="wrapper">
       <form method="POST" action="{{ route('login') }}">
-      @csrf
+        @csrf
       
         <img class="logo" src="{{ url ('Assets/Images/logofull.png')}}" alt="">
         <h2>Acesso ao sistema</h2>
 
         <!-- Email Address -->
         <div class="input-field">
-            <input type="email" id="email" required>
+            <input type="email" id="email" name="email" required>
             <label for="email">Email</label>
         </div>
 
         <!-- Password -->
         <div class="input-field">
-            <input type="password" id="password" required>
+            <input type="password" id="password" name="password" required>
             <label for="password">Senha</label>
         </div>
 
         <!-- Remember Me -->
         <div class="forget">
           <label for="remember_me" class="inline-flex items-center">
-                  <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200focus:ring-opacity-50" name="remember">
+                  <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50" name="remember">
                   <span class="ml-2 text-sm text-gray-600">{{ __('Lembre-me') }}</span>
             </label>
-
 
             <div class="flex items-center justify-end mt-4">
                 @if (Route::has('password.request'))
@@ -59,9 +58,10 @@
             </div>
         </div>
 
-        <x-button class="ml-3">
-                    {{ __('Log in') }}
-        </x-button>
+        <!-- Submit Button -->
+        <button type="submit" class="ml-3">
+            {{ __('Log in') }}
+        </button>
 
         <div class="register">
           <p>Não tem uma conta? <a href="#">Entre em contato</a></p>
