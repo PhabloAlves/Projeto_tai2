@@ -11,6 +11,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Carbon\Carbon;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class AgendamentosController extends Controller
 {
@@ -244,7 +247,7 @@ class AgendamentosController extends Controller
         $agendamento->fill($request->all());
         $agendamento->save();
 
-        
+
         return response()->json($agendamento, 200);
     }
 
@@ -253,7 +256,7 @@ class AgendamentosController extends Controller
     {
         $userId = Auth::id();
 
-  
+
         $query = Agendamentos::query()->where('users_id', $userId);
 
         if ($request->filled('servicos_id')) {
@@ -309,4 +312,91 @@ class AgendamentosController extends Controller
             return redirect()->back()->with('error', 'Erro ao deletar o agendamento. Por favor, tente novamente.');
         }
     }
+
+
+    public function export(Request $request)
+    {
+        
+        $statusMap = [
+            0 => 'aguardando',
+            1 => 'confirmado',
+            2 => 'concluído',
+            3 => 'cancelado'
+        ];
+
+        
+        $dados = $request->input(); 
+
+       
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+
+        
+        $sheet->setCellValue('A1', 'Data');
+        $sheet->setCellValue('B1', 'Hora Início');
+        $sheet->setCellValue('C1', 'Hora Fim');
+        $sheet->setCellValue('D1', 'Cliente');
+        $sheet->setCellValue('E1', 'Serviço');
+        $sheet->setCellValue('F1', 'Funcionário');
+        $sheet->setCellValue('G1', 'Status');
+        $sheet->setCellValue('H1', 'Valor');
+
+        
+        $row = 2; 
+        foreach ($dados as $dado) {
+            $sheet->setCellValue('A' . $row, $dado['Data']);
+            $sheet->setCellValue('B' . $row, $dado['hora_inicio']);
+            $sheet->setCellValue('C' . $row, $dado['hora_fim']);
+            $sheet->setCellValue('D' . $row, $dado['Cliente']);
+            $sheet->setCellValue('E' . $row, $dado['Nome']);
+            $sheet->setCellValue('F' . $row, $dado['Funcionario']);
+
+            
+            $sheet->setCellValue('G' . $row, $statusMap[$dado['Status']] ?? 'Desconhecido');
+
+            $sheet->setCellValue('H' . $row, $dado['Valor']);
+            $row++;
+        }
+
+      
+        $sheet->getStyle('A1:H1')->applyFromArray([
+            'font' => [
+                'bold' => true,
+            ],
+            'alignment' => [
+                'horizontal' => \PhpOffice\PhpSpreadsheet\Style\Alignment::HORIZONTAL_CENTER,
+            ],
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ]);
+
+      
+        $sheet->getStyle('A2:H' . ($row - 1))->applyFromArray([
+            'borders' => [
+                'allBorders' => [
+                    'borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN,
+                ],
+            ],
+        ]);
+
+       
+        foreach (range('A', 'H') as $columnID) {
+            $sheet->getColumnDimension($columnID)->setAutoSize(true);
+        }
+
+      
+        $writer = new Xlsx($spreadsheet);
+        $filename = 'planilha_agendamentos.xlsx';
+
+        return new StreamedResponse(function () use ($writer) {
+            $writer->save('php://output');
+        }, 200, [
+            'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'Content-Disposition' => "attachment; filename=\"{$filename}\"",
+        ]);
+    }
+
 }
