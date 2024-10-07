@@ -15,6 +15,8 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
+use App\Exports\PlanilhaExport;
+
 class AgendamentosController extends Controller
 {
     public function index()
@@ -146,12 +148,12 @@ class AgendamentosController extends Controller
         } else {
             // Verificar se existe jornada no dia da semana se não houver no dia específico
             $jornadasDiaSemana = Jornadas::where('funcionarios_id', $postdata['funcionario_id'])
-                ->where('diaSemana', 'like', "%$diaSemana%")
+                ->where('diaSemana', $diaSemana)
                 ->exists();
 
             if ($jornadasDiaSemana) {
                 $jornadaHorario = Jornadas::where('funcionarios_id', $postdata['funcionario_id'])
-                    ->where('diaSemana', 'like', "%$diaSemana%")
+                    ->where('diaSemana', $diaSemana)
                     ->where(function ($query) use ($postdata) {
                         $query->where('horaInicio', '<=', $postdata['horaInicio'])
                             ->where('horaFim', '>=', $postdata['horaFim']);
@@ -202,7 +204,7 @@ class AgendamentosController extends Controller
         $agendamento = new Agendamentos();
 
         $agendamento->empresas_id = $empresa->id;
-        $agendamento->users_id = 1;
+        $agendamento->users_id = Auth::id();
         $agendamento->funcionarios_id = $postdata['funcionario_id'];
         $agendamento->servicos_id = $postdata['servico_id'];
         $agendamento->hora_inicio = $postdata['horaInicio'];
@@ -314,7 +316,7 @@ class AgendamentosController extends Controller
     }
 
 
-    public function export(Request $request)
+    public function exportar(Request $request)
     {
         
         $statusMap = [
@@ -325,7 +327,8 @@ class AgendamentosController extends Controller
         ];
 
         
-        $dados = $request->input(); 
+        $userId = Auth::id();
+        $dados = Agendamentos::where('users_id', $userId)->with('servico', 'funcionario')->get();
 
        
         $spreadsheet = new Spreadsheet();
@@ -344,17 +347,22 @@ class AgendamentosController extends Controller
         
         $row = 2; 
         foreach ($dados as $dado) {
-            $sheet->setCellValue('A' . $row, $dado['Data']);
-            $sheet->setCellValue('B' . $row, $dado['hora_inicio']);
-            $sheet->setCellValue('C' . $row, $dado['hora_fim']);
-            $sheet->setCellValue('D' . $row, $dado['Cliente']);
-            $sheet->setCellValue('E' . $row, $dado['Nome']);
-            $sheet->setCellValue('F' . $row, $dado['Funcionario']);
-
+            $sheet->setCellValue('A' . $row, $dado->data->format('d/m/Y'));
+            $sheet->setCellValue('B' . $row, $dado->hora_inicio->format('H:i'));
+            $sheet->setCellValue('C' . $row, $dado->hora_fim->format('H:i'));
+            $sheet->setCellValue('D' . $row, $dado->nome_cliente);
             
-            $sheet->setCellValue('G' . $row, $statusMap[$dado['Status']] ?? 'Desconhecido');
-
-            $sheet->setCellValue('H' . $row, $dado['Valor']);
+            // Extrair o nome do serviço ou exibir 'Serviço não encontrado'
+            $sheet->setCellValue('E' . $row, $dado->servico ? $dado->servico->nome_servico : 'Serviço não encontrado');
+            
+            // Extrair o nome do funcionário ou exibir 'Funcionário não encontrado'
+            $sheet->setCellValue('F' . $row, $dado->funcionario ? $dado->funcionario->nome : 'Funcionário não encontrado');
+            
+            // Status do agendamento
+            $sheet->setCellValue('G' . $row, $statusMap[$dado->status] ?? 'Desconhecido');
+            
+            // Valor do serviço
+            $sheet->setCellValue('H' . $row, $dado->servico ? $dado->servico->valor : 0);
             $row++;
         }
 
@@ -397,6 +405,16 @@ class AgendamentosController extends Controller
             'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
             'Content-Disposition' => "attachment; filename=\"{$filename}\"",
         ]);
+    }
+
+    public function servico()
+    {
+    return $this->belongsTo(Servicos::class, 'servicos_id');
+    }
+
+    public function funcionario()
+    {
+    return $this->belongsTo(Funcionarios::class, 'funcionarios_id');
     }
 
 }

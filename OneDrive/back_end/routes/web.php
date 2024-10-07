@@ -1,12 +1,14 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AgendamentosController;
 
 // Rotas que requerem autenticação
 Route::group(['middleware' => 'auth'], function () {
     
     //agenda
 Route::get('/agendamentos', 'App\Http\Controllers\agendamentosController@index');
+Route::get('/agendamentos/exportar', [AgendamentosController::class, 'exportar'])->name('agendamentos.exportar');
 
 // Rotas para users
 Route::get('/users', 'App\Http\Controllers\UsersController@index');
@@ -56,7 +58,7 @@ Route::put('/categoriasservicos/{id}', 'App\Http\Controllers\CategoriasServicosC
 // Rotas para jornadas
 Route::get('/jornadas', 'App\Http\Controllers\JornadasController@index')->name('jornadas.index');
 Route::get('/jornadas/create/{id?}', 'App\Http\Controllers\JornadasController@create')->name('jornadas.create');
-Route::get('/jornadas/{nome?}', 'App\Http\Controllers\JornadasController@dados')->name('jornadas.dados');
+Route::get('/jornadas_dados/{nome?}', 'App\Http\Controllers\JornadasController@dados')->name('jornadas.dados');
 Route::delete('/jornadas/{id}', 'App\Http\Controllers\JornadasController@delete')->name('jornadas.delete');
 Route::post('/jornadas', 'App\Http\Controllers\JornadasController@store')->name('jornadas.store');
 Route::put('/jornadas/{id}', 'App\Http\Controllers\JornadasController@update')->name('jornadas.update');

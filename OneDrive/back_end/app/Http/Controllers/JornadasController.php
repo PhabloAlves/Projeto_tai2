@@ -24,17 +24,17 @@ class JornadasController extends Controller
     
         // Inicia a query base
         $query = Jornadas::join('funcionarios', 'funcionarios.id', 'jornadas.funcionarios_id')
-                         ->where('jornadas.empresas_id', $empresa->id)
-                         ->select(
-                             'jornadas.id',
-                             'jornadas.diaMes',
-                             'jornadas.horaInicio',
-                             'jornadas.horaFim',
-                             'jornadas.operacao',
-                             'funcionarios.nome',
-                             'funcionarios.sobrenome'
-                         );
-    
+        ->where('jornadas.empresas_id', $empresa->id)
+        ->select(
+            'jornadas.id',
+            'jornadas.diaMes',
+            'jornadas.horaInicio',
+            'jornadas.horaFim',
+            'jornadas.operacao',
+            'funcionarios.nome',
+            'funcionarios.sobrenome'
+        );
+
         // Aplica os filtros se presentes na requisição
         if ($request->has('funcionarios_id')) {
             $query->where('jornadas.funcionarios_id', $request->input('funcionarios_id'));
@@ -92,6 +92,7 @@ class JornadasController extends Controller
             ->select(
                 'jornadas.id',
                 'jornadas.diaMes',
+                'jornadas.diaSemana',
                 'jornadas.horaInicio',
                 'jornadas.horaFim',
                 'jornadas.operacao',
@@ -105,10 +106,23 @@ class JornadasController extends Controller
             'Subtração',
         ];
 
+        $diasSemana = [
+            0 => 'Domingo',
+            1 => 'Segunda-Feira',
+            2 => 'Terça-Feira',
+            3 => 'Quarta-Feira',
+            4 => 'Quinta-Feira',
+            5 => 'Sexta-Feira',
+            6 => 'Sábado',
+        ];
+
         foreach ($jornadas as &$jornada) {
             if ($jornada->diaMes != null) {
                 $jornada->dia = $jornada->diaMes->format('d/m/Y');
             } 
+            else {
+            $jornada->dia = $diasSemana[$jornada->diaSemana];
+            }
             $jornada->operacao = $operacao[$jornada->operacao];
             // $jornada->horaIni = $jornada->horaInicio->format('H:i');
             // $jornada->horaF = $jornada->horaFim->format('H:i');
@@ -160,6 +174,7 @@ class JornadasController extends Controller
                 $jornada->horaInicio = $postdata['horaInicio'];
                 $jornada->horaFim = $postdata['horaFim'];
                 $jornada->operacao = $postdata['operacao'];
+                $jornada->diaSemana = $diaSemana;
                 $jornada->diaMes = null;
 
                 $jornada->save();
@@ -172,6 +187,7 @@ class JornadasController extends Controller
             $jornada->horaInicio = $postdata['horaInicio'];
             $jornada->horaFim = $postdata['horaFim'];
             $jornada->operacao = $postdata['operacao'];
+            $jornada->diaSemana = null;
             $jornada->diaMes = $postdata['diaMes'];
 
             $jornada->save();

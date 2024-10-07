@@ -66,6 +66,28 @@
                                         </div>
                                 
                                         <div class="row mb-3">
+                                                <div class="col-md-12">
+                                                        <label for="diaSemana" class="form-label">Dia da Semana:</label>
+                                                        <div class="input-group">
+                                                                <select name="diaSemana[]" class="form-select" id="diaSemana" multiple="multiple">
+                                                                        <option value="1" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(1, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Segunda-Feira</option>
+                                                                        <option value="2" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(2, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Terça-Feira</option>
+                                                                        <option value="3" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(3, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Quarta-Feira</option>
+                                                                        <option value="4" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(4, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Quinta-Feira</option>
+                                                                        <option value="5" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(5, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Sexta-Feira</option>
+                                                                        <option value="6" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(6, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Sábado</option>
+                                                                        <option value="0" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(0, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Domingo</option>
+                                                                </select>
+                                                                <div class="input-group-append">
+                                                                        <button type="button" class="btn btn-outline-dark" id="selectAllDays">
+                                                                                <i class="fas fa-plus"></i>
+                                                                        </button>
+                                                                </div>
+                                                        </div>
+                                                </div>
+                                        </div>
+                                        
+                                        <div class="row mb-3">
                                                 <div class="col-md-4">
                                                         <label for="diaMes" class="form-label">Dia do Mês:</label>
                                                         <input name="diaMes" type="date" class="form-control" id="diaMes" value="{{ old('diaMes', $jornada['diaMes'] ?? '') }}">

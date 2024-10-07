@@ -23,7 +23,8 @@
         @endif
         <div class="row justify-content-end mb-3">
             <div class="col-auto">
-                <a href="{{ route('agendamentos.create') }}" class="btn btn-primary" target="_blank">Novo</a>
+                <a href="{{ route('agendamentos.create') }}" class="btn btn-primary" target="_blank">Novo <span class="bi bi-plus-lg"></span></a>
+                <a href="{{ route('agendamentos.exportar') }}" class="btn btn-primary" target="_blank">Gerar relatório <span class="bi bi-box-arrow-in-down"></a>                
             </div>
         </div>
         <div class="row">
