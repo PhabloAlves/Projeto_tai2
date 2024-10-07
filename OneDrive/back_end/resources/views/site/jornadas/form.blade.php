@@ -69,7 +69,7 @@
                                                 <div class="col-md-12">
                                                         <label for="diaSemana" class="form-label">Dia da Semana:</label>
                                                         <div class="input-group">
-                                                                <select name="diaSemana[]" class="form-select" id="diaSemana" multiple="multiple">
+                                                                <select name="diaSemana[]" class="form-select select2" id="diaSemana" multiple="multiple">
                                                                         <option value="1" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(1, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Segunda-Feira</option>
                                                                         <option value="2" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(2, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Terça-Feira</option>
                                                                         <option value="3" {{ isset($jornada) && $jornada['diaSemana'] !== null && in_array(3, explode(',', $jornada['diaSemana'])) ? 'selected' : '' }}>Quarta-Feira</option>

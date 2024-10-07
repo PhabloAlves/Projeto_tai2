@@ -5,10 +5,6 @@ use App\Http\Controllers\AgendamentosController;
 
 // Rotas que requerem autenticação
 Route::group(['middleware' => 'auth'], function () {
-    
-    //agenda
-Route::get('/agendamentos', 'App\Http\Controllers\agendamentosController@index');
-Route::get('/agendamentos/exportar', [AgendamentosController::class, 'exportar'])->name('agendamentos.exportar');
 
 // Rotas para users
 Route::get('/users', 'App\Http\Controllers\UsersController@index');
@@ -47,6 +43,8 @@ Route::get('/agendamentos/create/{id?}', 'App\Http\Controllers\AgendamentosContr
 Route::delete('/agendamentos/{id}', 'App\Http\Controllers\AgendamentosController@delete')->name('agendamentos.delete');
 Route::post('/agendamentos', 'App\Http\Controllers\AgendamentosController@store')->name('agendamentos.store');
 Route::put('/agendamentos/{id}', 'App\Http\Controllers\AgendamentosController@update')->name('agendamentos.update');
+Route::post('/agendamentos/{id}/update-status', 'App\Http\Controllers\AgendamentosController@updateStatus')->name('agendamentos.update-status');
+Route::get('/agendamentos/exportar', [AgendamentosController::class, 'exportar'])->name('agendamentos.exportar');
 
 // Rotas para categorias de serviços
 Route::get('/categoriasservicos', 'App\Http\Controllers\CategoriasServicosController@index')->name('categoriasServicos.index');
@@ -93,9 +91,9 @@ Route::get('/usuarios', function () {
     return view('site.usuarios.index');
 });
 
-Route::get('/agendamentos', function () {
-    return view('site.agendamentos.index');
-});
+// Route::get('/agendamentos', function () {
+//     return view('site.agendamentos.index');
+// });
 
 Route::get('/categoriaservicos', function () {
     return view('site.categoriasservicos.index');

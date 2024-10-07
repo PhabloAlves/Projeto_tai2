@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 
 class Jornadas extends Model
 {
@@ -24,6 +25,24 @@ class Jornadas extends Model
         'horaFim',
         'operacao',
     ];
+
+    public static function validate($data)
+    {
+        return Validator::make($data, [
+            'diaMes' => ['date_format:Y-m-d'],
+            'horaInicio' => ['required', 'date_format:H:i'],
+            'horaFim' => ['required', 'date_format:H:i'],
+            'operacao' => ['required', 'integer'],
+        ], [
+            'diaMes.date_format' => 'O campo dia do mes deve estar no formato de data YYYY-MM-DD.',
+            'horaInicio.required' => 'O campo hora início é obrigatório.',
+            'horaInicio.date_format' => 'O campo hora início deve estar no formato de hora HH:MM.',
+            'horaFim.required' => 'O campo hora fim é obrigatório.',
+            'horaFim.date_format' => 'O campo hora fim deve estar no formato de hora HH:MM.',
+            'operacao.required' => 'O campo operação é obrigatório.',
+            'operacao.integer' => 'O campo operação deve ser um número inteiro.',
+        ]);
+    }
 
     /**
      * The attributes that should be cast to native types.

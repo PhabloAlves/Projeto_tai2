@@ -19,6 +19,20 @@ use App\Exports\PlanilhaExport;
 
 class AgendamentosController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+
+        $this->middleware(function ($request, $next) {
+            $this->user = Auth::user()->id; // Carrega o usuário logado
+            $this->empresa = Empresas::where('users_id', $this->user)->first();
+
+            view()->share('empresa', $this->empresa);
+            view()->share('jsFile', 'agendamentos.js');
+            return $next($request);
+        });
+    }
+
     public function index()
     {
         return view('site.agendamentos.index');
@@ -26,19 +40,26 @@ class AgendamentosController extends Controller
 
     public function dados()
     {
-        $userId = Auth::id(); // teste, lembrar de mudar quando login voltar = 1 para teste, = Auth::id(); para login
-        $agendamentos = Agendamentos::where('users_id', $userId)->orderBy('data', 'asc')->get();
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
+
+        $agendamentos = Agendamentos::where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
+            ->orderBy('data', 'asc')
+            ->get();
+
         $agendamentosFormatados = [];
 
         foreach ($agendamentos as $agendamento) {
             $servico = Servicos::find($agendamento->servicos_id);
             $funcionario = Funcionarios::find($agendamento->funcionarios_id);
             $agendamentoFormatado = [
+                'id' => $agendamento->id,
                 'Data' => $agendamento->data->format('d/m/Y'),
                 'hora_inicio' => $agendamento->hora_inicio->format('H:i'),
                 'hora_fim' => $agendamento->hora_fim->format('H:i'),
-                'Cliente' => $agendamento->nome_cliente, // Supondo que você tenha um campo 'nome_cliente'
-                'Nome' => $servico ? $servico->nome_servico : 'Serviço não encontrado',
+                'Cliente' => $agendamento->nome_cliente,
+                'Nome' => $servico->nome_servico,
                 'Funcionario' => $funcionario->nome,
                 'Status' => $agendamento->status,
                 'Valor' => $servico ? $servico->valor : 0,
@@ -50,37 +71,11 @@ class AgendamentosController extends Controller
         return response()->json($agendamentosFormatados);
     }
 
-
-
-
-    // public function index_by_user()
-    // {
-    //     $userId = Auth::id(); //teste, lembrar de mudar quando login voltar
-    //     $agendamentos = Agendamentos::where('users_id', $userId)->get();
-    //     $agendamentosFormatados = [];
-
-
-    //     foreach ($agendamentos as $agendamento) {
-    //         $servico = Servicos::find($agendamento->servicos_id);
-    //         $agendamentoFormatado = [
-    //             'Data' => $agendamento->data->format('Y-m-d'),
-    //             'hora_inicio' => $agendamento->hora_inicio->format('H:i'),
-    //             'hora_fim' => $agendamento->hora_fim->format('H:i'),
-    //             'Cliente' => $agendamento->nome_cliente, // Supondo que você tenha um campo 'nome_cliente'
-    //             'Nome' => $servico ? $servico->nome_servico : 'Serviço não encontrado',
-    //             'Status' => $agendamento->status,
-    //             'Valor' => $servico ? $servico->valor : 0,
-    //         ];
-
-    //         $agendamentosFormatados[] = $agendamentoFormatado;
-    //     }
-
-    //     return response()->json($agendamentosFormatados);
-    // }
-
-
     public function create($id = null)
     {
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
+
         if ($id != null) {
             $agendamento = Agendamentos::findOrFail($id);
             $dataMes = $agendamento->data->format('Y-m-d');
@@ -94,25 +89,23 @@ class AgendamentosController extends Controller
             $agendamento = new Agendamentos();
         }
 
-        $idusuario = 1; //teste, lembrar de mudar quando login voltar
-        $empresa = Empresas::where('users_id', $idusuario)->first();
-        $funcionarios = Funcionarios::where('empresas_id', $empresa->id)->get();
-        $servicos = Servicos::where('empresas_id', $empresa->id)->get();
+
+        $funcionarios = Funcionarios::where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
+            ->get();
+
+        $servicos = Servicos::where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
+            ->get();
 
         return view('site.agendamentos.form', compact('agendamento', 'funcionarios', 'servicos'));
     }
 
     public function store(Request $request)
     {
-        // $validator = Agendamentos::validate($request->all());
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
-
-        $empresa = Empresas::where('users_id', 1)->first();
         $postdata = $request->input();
 
         $data = Carbon::parse($postdata['data']);
@@ -120,6 +113,8 @@ class AgendamentosController extends Controller
 
         $jornadasDiaMes = Jornadas::where('funcionarios_id', $postdata['funcionario_id'])
             ->where('diaMes', $postdata['data'])
+            ->where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
             ->exists();
 
         if ($jornadasDiaMes) {
@@ -130,6 +125,8 @@ class AgendamentosController extends Controller
                     $query->where('horaInicio', '<=', $postdata['horaInicio'])
                         ->where('horaFim', '>=', $postdata['horaFim']);
                 })
+                ->where('empresas_id', $empresaId)
+                ->where('users_id', $userId)
                 ->exists();
 
             // Verificar se há uma operação de subtração que interfere no horário
@@ -140,6 +137,8 @@ class AgendamentosController extends Controller
                     $query->where('horaInicio', '<=', $postdata['horaFim'])
                         ->where('horaFim', '>=', $postdata['horaInicio']);
                 })
+                ->where('empresas_id', $empresaId)
+                ->where('users_id', $userId)
                 ->exists();
 
             if (!$jornadaHorario || $operacaoSubtracaoDiaMes) {
@@ -149,6 +148,8 @@ class AgendamentosController extends Controller
             // Verificar se existe jornada no dia da semana se não houver no dia específico
             $jornadasDiaSemana = Jornadas::where('funcionarios_id', $postdata['funcionario_id'])
                 ->where('diaSemana', $diaSemana)
+                ->where('empresas_id', $empresaId)
+                ->where('users_id', $userId)
                 ->exists();
 
             if ($jornadasDiaSemana) {
@@ -158,6 +159,8 @@ class AgendamentosController extends Controller
                         $query->where('horaInicio', '<=', $postdata['horaInicio'])
                             ->where('horaFim', '>=', $postdata['horaFim']);
                     })
+                    ->where('empresas_id', $empresaId)
+                    ->where('users_id', $userId)
                     ->exists();
 
                 // Verificar se há uma operação de subtração que interfere no horário
@@ -168,6 +171,8 @@ class AgendamentosController extends Controller
                         $query->where('horaInicio', '<=', $postdata['horaFim'])
                             ->where('horaFim', '>=', $postdata['horaInicio']);
                     })
+                    ->where('empresas_id', $empresaId)
+                    ->where('users_id', $userId)
                     ->exists();
 
                 if (!$jornadaHorario || $operacaoSubtracaoDiaSemana) {
@@ -194,6 +199,8 @@ class AgendamentosController extends Controller
                             ->where('hora_fim', '<', $postdata['horaFim']);
                     });
             })
+            ->where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
             ->exists();
 
         if ($agendamentosCriados) {
@@ -203,8 +210,8 @@ class AgendamentosController extends Controller
         DB::beginTransaction();
         $agendamento = new Agendamentos();
 
-        $agendamento->empresas_id = $empresa->id;
-        $agendamento->users_id = Auth::id();
+        $agendamento->empresas_id = $empresaId;
+        $agendamento->users_id = $userId;
         $agendamento->funcionarios_id = $postdata['funcionario_id'];
         $agendamento->servicos_id = $postdata['servico_id'];
         $agendamento->hora_inicio = $postdata['horaInicio'];
@@ -226,14 +233,6 @@ class AgendamentosController extends Controller
     {
         $agendamento = Agendamentos::findOrFail($id);
 
-        // $validator = Agendamentos::validate($request->all());
-
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
-
         $agendamento->update([
             // 'funcionarios_id' => $request->input('funcionario_id'),
             'servicos_id' => $request->input('servico_id'),
@@ -246,20 +245,19 @@ class AgendamentosController extends Controller
     public function updateStatus(Request $request, $id)
     {
         $agendamento = Agendamentos::findOrFail($id);
-        $agendamento->fill($request->all());
+        $agendamento->status = $request->input('Status');
         $agendamento->save();
-
 
         return response()->json($agendamento, 200);
     }
 
-
     public function filtros(Request $request)
     {
-        $userId = Auth::id();
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
 
-
-        $query = Agendamentos::query()->where('users_id', $userId);
+        $query = Agendamentos::query()->where('users_id', $userId)
+            ->where('empresas_id', $empresaId);
 
         if ($request->filled('servicos_id')) {
             $query->where('servicos_id', $request->input('servicos_id'));
@@ -318,7 +316,9 @@ class AgendamentosController extends Controller
 
     public function exportar(Request $request)
     {
-        
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
+
         $statusMap = [
             0 => 'aguardando',
             1 => 'confirmado',
@@ -326,15 +326,14 @@ class AgendamentosController extends Controller
             3 => 'cancelado'
         ];
 
-        
-        $userId = Auth::id();
-        $dados = Agendamentos::where('users_id', $userId)->with('servico', 'funcionario')->get();
+        $dados = Agendamentos::where('users_id', $userId)
+            ->where('empresas_id', $empresaId)
+            ->with('servico', 'funcionario')
+            ->get();
 
-       
         $spreadsheet = new Spreadsheet();
         $sheet = $spreadsheet->getActiveSheet();
 
-        
         $sheet->setCellValue('A1', 'Data');
         $sheet->setCellValue('B1', 'Hora Início');
         $sheet->setCellValue('C1', 'Hora Fim');
@@ -344,29 +343,27 @@ class AgendamentosController extends Controller
         $sheet->setCellValue('G1', 'Status');
         $sheet->setCellValue('H1', 'Valor');
 
-        
-        $row = 2; 
+        $row = 2;
         foreach ($dados as $dado) {
             $sheet->setCellValue('A' . $row, $dado->data->format('d/m/Y'));
             $sheet->setCellValue('B' . $row, $dado->hora_inicio->format('H:i'));
             $sheet->setCellValue('C' . $row, $dado->hora_fim->format('H:i'));
             $sheet->setCellValue('D' . $row, $dado->nome_cliente);
-            
+
             // Extrair o nome do serviço ou exibir 'Serviço não encontrado'
             $sheet->setCellValue('E' . $row, $dado->servico ? $dado->servico->nome_servico : 'Serviço não encontrado');
-            
+
             // Extrair o nome do funcionário ou exibir 'Funcionário não encontrado'
             $sheet->setCellValue('F' . $row, $dado->funcionario ? $dado->funcionario->nome : 'Funcionário não encontrado');
-            
+
             // Status do agendamento
             $sheet->setCellValue('G' . $row, $statusMap[$dado->status] ?? 'Desconhecido');
-            
+
             // Valor do serviço
             $sheet->setCellValue('H' . $row, $dado->servico ? $dado->servico->valor : 0);
             $row++;
         }
 
-      
         $sheet->getStyle('A1:H1')->applyFromArray([
             'font' => [
                 'bold' => true,
@@ -381,7 +378,7 @@ class AgendamentosController extends Controller
             ],
         ]);
 
-      
+
         $sheet->getStyle('A2:H' . ($row - 1))->applyFromArray([
             'borders' => [
                 'allBorders' => [
@@ -390,12 +387,10 @@ class AgendamentosController extends Controller
             ],
         ]);
 
-       
         foreach (range('A', 'H') as $columnID) {
             $sheet->getColumnDimension($columnID)->setAutoSize(true);
         }
 
-      
         $writer = new Xlsx($spreadsheet);
         $filename = 'planilha_agendamentos.xlsx';
 
@@ -409,12 +404,11 @@ class AgendamentosController extends Controller
 
     public function servico()
     {
-    return $this->belongsTo(Servicos::class, 'servicos_id');
+        return $this->belongsTo(Servicos::class, 'servicos_id');
     }
 
     public function funcionario()
     {
-    return $this->belongsTo(Funcionarios::class, 'funcionarios_id');
+        return $this->belongsTo(Funcionarios::class, 'funcionarios_id');
     }
-
 }

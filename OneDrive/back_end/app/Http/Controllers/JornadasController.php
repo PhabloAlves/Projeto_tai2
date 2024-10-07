@@ -7,59 +7,68 @@ use App\Models\Empresas;
 use App\Models\Funcionarios;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 
 class JornadasController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('auth');
+
         $this->middleware(function ($request, $next) {
+            $this->user = Auth::user()->id; // Carrega o usuário logado
+            $this->empresa = Empresas::where('users_id', $this->user)->first();
+
+            view()->share('empresa', $this->empresa);
             view()->share('jsFile', 'jornadas.js');
             return $next($request);
         });
     }
+    
     public function filtros(Request $request)
     {
-        $id = 1; // teste, lembrar de mudar quando login voltar
-        $empresa = Empresas::where('users_id', $id)->first();
-    
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
+
         // Inicia a query base
         $query = Jornadas::join('funcionarios', 'funcionarios.id', 'jornadas.funcionarios_id')
-        ->where('jornadas.empresas_id', $empresa->id)
-        ->select(
-            'jornadas.id',
-            'jornadas.diaMes',
-            'jornadas.horaInicio',
-            'jornadas.horaFim',
-            'jornadas.operacao',
-            'funcionarios.nome',
-            'funcionarios.sobrenome'
-        );
+            ->where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
+            ->select(
+                'jornadas.id',
+                'jornadas.diaMes',
+                'jornadas.horaInicio',
+                'jornadas.horaFim',
+                'jornadas.operacao',
+                'funcionarios.nome',
+                'funcionarios.sobrenome'
+            );
 
         // Aplica os filtros se presentes na requisição
         if ($request->has('funcionarios_id')) {
             $query->where('jornadas.funcionarios_id', $request->input('funcionarios_id'));
         }
-    
+
         if ($request->has('diaMes')) {
             $query->whereDate('jornadas.diaMes', $request->input('diaMes'));
         }
-    
+
         if ($request->has('operacao')) {
             $query->where('jornadas.operacao', $request->input('operacao'));
         }
-    
+
         // Ordena os resultados pela data (diaMes) em ordem decrescente
         $query->orderBy('jornadas.diaMes', 'desc');
-    
+
         // Executa a query e obtém os resultados
         $jornadas = $query->get();
-    
+
         // Mapeia os valores de 'operacao'
         $operacao = [
             'Adição',
             'Subtração',
         ];
-    
+
         // Formata os resultados
         foreach ($jornadas as &$jornada) {
             if ($jornada->diaMes != null) {
@@ -67,28 +76,36 @@ class JornadasController extends Controller
             }
             $jornada->operacao = $operacao[$jornada->operacao];
         }
-    
+
         // Retorna os resultados como JSON
         return response()->json($jornadas);
     }
-    
-
 
     public function dados($nome)
     {
-        $userId = Auth::id(); // teste, lembrar de mudar quando login voltar
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
+
         $funcionario = Funcionarios::where('nome', $nome)->first();
-        $jornadas = Jornadas::where('users_id', $userId)->where('funcionarios_id', $funcionario->id)->where('operacao', 0)->get();
+        $jornadas = Jornadas::where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
+            ->where('funcionarios_id', $funcionario->id)
+            ->where('operacao', 0)
+            ->get();
 
         return response()->json($jornadas);
     }
 
     public function index()
     {
-        $id = 1; //teste, lembrar de mudar quando login voltar
-        $empresa = Empresas::where('users_id', $id)->first();
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
+
+        $selectFuncionario = Funcionarios::where('empresas_id', $empresaId)->get();
+
         $jornadas = Jornadas::join('funcionarios', 'funcionarios.id', 'jornadas.funcionarios_id')
-            ->where('jornadas.empresas_id', $empresa->id)
+            ->where('jornadas.empresas_id', $empresaId)
+            ->where('jornadas.users_id', $userId)
             ->select(
                 'jornadas.id',
                 'jornadas.diaMes',
@@ -119,20 +136,20 @@ class JornadasController extends Controller
         foreach ($jornadas as &$jornada) {
             if ($jornada->diaMes != null) {
                 $jornada->dia = $jornada->diaMes->format('d/m/Y');
-            } 
-            else {
-            $jornada->dia = $diasSemana[$jornada->diaSemana];
+            } else {
+                $jornada->dia = $diasSemana[$jornada->diaSemana];
             }
             $jornada->operacao = $operacao[$jornada->operacao];
-            // $jornada->horaIni = $jornada->horaInicio->format('H:i');
-            // $jornada->horaF = $jornada->horaFim->format('H:i');
         }
 
-        return view('site.jornadas.index', compact('jornadas'));
+        return view('site.jornadas.index', compact('jornadas', 'selectFuncionario'));
     }
 
     public function create($id = null)
     {
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
+
         if ($id != null) {
             $jornada = Jornadas::findOrFail($id);
             $dataMes = $jornada->diaMes ? $jornada->diaMes->format('Y-m-d') : null;
@@ -142,24 +159,26 @@ class JornadasController extends Controller
             $jornada = new Jornadas();
         }
 
-        $idusuario = 1; //teste, lembrar de mudar quando login voltar
-        $empresa = Empresas::where('users_id', $idusuario)->first();
-        $funcionarios = Funcionarios::where('empresas_id', $empresa->id)->get();
+        $funcionarios = Funcionarios::where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
+            ->get();
 
         return view('site.jornadas.form', compact('jornada', 'funcionarios'));
     }
 
     public function store(Request $request)
     {
-        // $validator = Jornadas::validate($request->all());
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        $validator = Jornadas::validate($request->all());
 
-        $empresa = Empresas::where('users_id', 1)->first();
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $postdata = $request->input();
 
         DB::beginTransaction();
@@ -168,8 +187,8 @@ class JornadasController extends Controller
         if (array_key_exists('diaSemana', $postdata)) {
             foreach ($postdata['diaSemana'] as $diaSemana) {
                 $jornada = new Jornadas();
-                $jornada->empresas_id = $empresa->id;
-                $jornada->users_id = 1;
+                $jornada->empresas_id = $empresaId;
+                $jornada->users_id = $userId;
                 $jornada->funcionarios_id = $postdata['funcionario_id'];
                 $jornada->horaInicio = $postdata['horaInicio'];
                 $jornada->horaFim = $postdata['horaFim'];
@@ -181,8 +200,8 @@ class JornadasController extends Controller
             }
         } else if (array_key_exists('diaMes', $postdata)) {
             $jornada = new Jornadas();
-            $jornada->empresas_id = $empresa->id;
-            $jornada->users_id = 1;
+            $jornada->empresas_id = $empresaId;
+            $jornada->users_id = $userId;
             $jornada->funcionarios_id = $postdata['funcionario_id'];
             $jornada->horaInicio = $postdata['horaInicio'];
             $jornada->horaFim = $postdata['horaFim'];
@@ -206,13 +225,13 @@ class JornadasController extends Controller
     {
         $jornada = Jornadas::findOrFail($id);
 
-        // $validator = Jornadas::validate($request->all());
+        $validator = Jornadas::validate($request->all());
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $jornada->update([
             'funcionarios_id' => $request->input('funcionario_id'),

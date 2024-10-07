@@ -5,12 +5,19 @@ namespace App\Http\Controllers;
 use App\Models\CategoriasServicos;
 use App\Models\Empresas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class CategoriasServicosController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('auth');
+
         $this->middleware(function ($request, $next) {
+            $this->user = Auth::user()->id; // Carrega o usuário logado
+            $this->empresa = Empresas::where('users_id', $this->user)->first();
+
+            view()->share('empresa', $this->empresa);
             view()->share('jsFile', 'categorias.js');
             return $next($request);
         });
@@ -18,9 +25,12 @@ class CategoriasServicosController extends Controller
 
     public function index()
     {
-        $id = 1; //teste, lembrar de mudar quando login voltar
-        $empresa = Empresas::where('users_id', $id)->first();
-        $categorias = CategoriasServicos::where('empresas_id', $empresa->id)->get();
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
+
+        $categorias = CategoriasServicos::where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
+            ->get();
 
         return view('site.categoriasservicos.index', compact('categorias'));
     }
@@ -38,20 +48,21 @@ class CategoriasServicosController extends Controller
 
     public function store(Request $request)
     {
-        // $validator = CategoriasServicos::validate($request->all());
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        $validator = CategoriasServicos::validate($request->all());
 
-        $empresa = Empresas::where('users_id', 1)->first();
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $categoria = new CategoriasServicos();
 
-        $categoria->empresas_id = $empresa->id;
-        $categoria->users_id = 1;
+        $categoria->empresas_id = $empresaId;
+        $categoria->users_id = $userId;
         $categoria->nome_categoria = $request->input('nome_categoria');
 
         if ($categoria->save()) {
@@ -65,13 +76,13 @@ class CategoriasServicosController extends Controller
     {
         $categoria = CategoriasServicos::findOrFail($id);
 
-        // $validator = CategoriasServicos::validate($request->all());
+        $validator = CategoriasServicos::validate($request->all());
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $categoria->update([
             'nome_categoria' => $request->input('nome_categoria'),

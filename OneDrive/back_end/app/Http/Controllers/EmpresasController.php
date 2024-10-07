@@ -5,12 +5,18 @@ namespace App\Http\Controllers;
 use App\Models\Empresas;
 use Illuminate\Http\Request;
 use Psy\Readline\Hoa\_Protocol;
+use Util;
+use Illuminate\Support\Facades\Auth;
 
 class EmpresasController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('auth');
+
         $this->middleware(function ($request, $next) {
+            $this->user = Auth::user()->id; // Carrega o usuário logado
+
             view()->share('jsFile', 'empresas.js');
             return $next($request);
         });
@@ -18,22 +24,26 @@ class EmpresasController extends Controller
     
     public function index()
     {
-        $empresa = Empresas::where('users_id', 1)->first() ?? new Empresas();
+        $userId = $this->user;
+
+        $empresa = Empresas::where('users_id', $userId)->first() ?? new Empresas();
         return view('site.empresas.index', compact('empresa'));
     }
 
     public function store(Request $request)
     {
-        // $validator = Empresas::validate($request->all());
+        $userId = $this->user;
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        $validator = Empresas::validate($request->all());
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $empresa = new Empresas();
-        $empresa->users_id = Auth::id();
+        $empresa->users_id = $userId;
         $empresa->identificacao = $request->input('identificacao');
         $empresa->razao_social = $request->input('razaoSocial');
         $empresa->tipo_inscricao = $request->input('tipoInscricao');
@@ -42,7 +52,7 @@ class EmpresasController extends Controller
         $empresa->telefone = $request->input('telefone');
         $empresa->endereco = $request->input('endereco');
         $empresa->bairro = $request->input('bairro');
-        $empresa->cep = $request->input('cep');
+        $empresa->cep = Util::remove_mascara_cep($request->input('cep'));
         $empresa->cidade = $request->input('cidade');
         $empresa->uf = $request->input('uf');
 
@@ -57,6 +67,14 @@ class EmpresasController extends Controller
     {
         $empresa = Empresas::findOrFail($id);
 
+        $validator = Empresas::validate($request->all());
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $empresa->update([
             'identificacao' => $request->input('identificacao'),
             'razao_social' => $request->input('razaoSocial'),
@@ -66,7 +84,7 @@ class EmpresasController extends Controller
             'telefone' => $request->input('telefone'),
             'endereco' => $request->input('endereco'),
             'bairro' => $request->input('bairro'),
-            'cep' => $request->input('cep'),
+            'cep' => Util::remove_mascara_cep($request->input('cep')),
             'cidade' => $request->input('cidade'),
             'uf' => $request->input('uf'),
         ]);

@@ -7,12 +7,19 @@ use App\Models\Funcionarios;
 use App\Models\Empresas;
 use App\Models\Jornadas;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class FuncionariosController extends Controller
 {
     public function __construct()
     {
+        $this->middleware('auth');
+
         $this->middleware(function ($request, $next) {
+            $this->user = Auth::user()->id; // Carrega o usuário logado
+            $this->empresa = Empresas::where('users_id', $this->user)->first();
+
+            view()->share('empresa', $this->empresa);
             view()->share('jsFile', 'funcionarios.js');
             return $next($request);
         });
@@ -20,31 +27,37 @@ class FuncionariosController extends Controller
 
     public function index()
     {
-        $id = 1; //teste, lembrar de mudar quando login voltar
-        $empresa = Empresas::where('users_id', $id)->first();
-        $funcionarios = Funcionarios::where('empresas_id', $empresa->id)->get();
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
+
+        $funcionarios = Funcionarios::where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
+            ->get();
 
         return view('site.funcionarios.index', compact('funcionarios'));
     }
 
     public function dados()
     {
-        $id = 1; //teste, lembrar de mudar quando login voltar
-        $empresa = Empresas::where('users_id', $id)->first();
-        $funcionarios = Funcionarios::where('empresas_id', $empresa->id)->get();
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
+
+        $funcionarios = Funcionarios::where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
+            ->get();
 
         return response($funcionarios);
     }
+    
     public function filtros(Request $request)
     {
-        $id = 1; // teste, lembrar de mudar quando login voltar
-        $empresa = Empresas::where('users_id', $id)->first();
-
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
 
         $nomeFiltro = $request->input('nome');
 
-
-        $funcionarios = Funcionarios::where('empresas_id', $empresa->id)
+        $funcionarios = Funcionarios::where('empresas_id', $empresaId)
+            ->where('users_id', $userId)
             ->where('nome', 'like', '%' . $nomeFiltro . '%')
             ->get();
 
@@ -68,20 +81,21 @@ class FuncionariosController extends Controller
 
     public function store(Request $request)
     {
-        // $validator = Funcionarios::validate($request->all());
+        $userId = $this->user;
+        $empresaId = $this->empresa->id;
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        $validator = Funcionarios::validate($request->all());
 
-        $empresa = Empresas::where('users_id', 1)->first();
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $funcionario = new Funcionarios();
 
-        $funcionario->empresas_id = $empresa->id;
-        $funcionario->users_id = 1;
+        $funcionario->empresas_id = $empresaId;
+        $funcionario->users_id = $userId;
         $funcionario->nome = $request->input('nome');
         $funcionario->sobrenome = $request->input('sobrenome');
         $funcionario->data_nascimento = $request->input('dataNascimento');
@@ -98,15 +112,23 @@ class FuncionariosController extends Controller
 
     public function update(Request $request, $id)
     {
+        $validator = Funcionarios::validate($request->all());
+
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
+
         $funcionario = Funcionarios::findOrFail($id);
 
-        // $validator = Funcionarios::validate($request->all());
+        $validator = Funcionarios::validate($request->all());
 
-        // if ($validator->fails()) {
-        //     return redirect()->back()
-        //         ->withErrors($validator)
-        //         ->withInput();
-        // }
+        if ($validator->fails()) {
+            return redirect()->back()
+                ->withErrors($validator)
+                ->withInput();
+        }
 
         $funcionario->update([
             'nome' => $request->input('nome'),

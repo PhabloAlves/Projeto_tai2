@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Validator;
 
 class Servicos extends Model
 {
@@ -23,6 +24,18 @@ class Servicos extends Model
         'valor',
         'duracao',
     ];
+
+    public static function validate($data)
+    {
+        return Validator::make($data, [
+            'nome_servico' => 'required|string|max:100',
+            'valor' => 'required|numeric|min:0',
+        ], [
+            'nome_servico.required' => 'O campo nome serviço é obrigatório.',
+            'nome_servico.max' => 'O campo nome serviço deve ter no máximo :max caracteres.',
+            'valor.required' => 'O campo valor é obrigatório.',
+        ]);
+    }
 
     /**
      * The attributes that should be cast to native types.
