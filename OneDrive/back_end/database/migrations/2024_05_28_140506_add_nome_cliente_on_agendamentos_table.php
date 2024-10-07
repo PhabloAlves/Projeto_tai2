@@ -13,7 +13,7 @@ class AddNomeClienteOnAgendamentosTable extends Migration
      */
     public function up()
     {
-        Schema::table('Agendamentos', function (Blueprint $table) {
+        Schema::table('agendamentos', function (Blueprint $table) {
             $table->string('nome_cliente', 60);
         });
     }
