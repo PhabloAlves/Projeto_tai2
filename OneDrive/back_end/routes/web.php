@@ -68,14 +68,19 @@ Route::get('/textos/{texto}', 'App\Http\Controllers\TextosController@show');
 Route::put('/textos/{texto}', 'App\Http\Controllers\TextosController@update');
 Route::delete('/textos/{texto}', 'App\Http\Controllers\TextosController@destroy');
 
-// Rotas para views
-Route::get('/', function () {
-    return view('dashboard');
-});
+// Rotas para agendamentos
+Route::get('/dashboard', 'App\Http\Controllers\DashboardController@index')->name('dashboard.index');
+Route::get('/dashboard_dados', 'App\Http\Controllers\DashboardController@dados')->name('dashboard.dados');
+Route::post('/dashboard/{id}/update-status', 'App\Http\Controllers\DashboardController@updateStatus')->name('dashboard.update-status');
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+// Rotas para views
+// Route::get('/', function () {
+//     return view('dashboard');
+// });
+
+// Route::get('/dashboard', function () {
+//     return view('dashboard');
+// })->middleware(['auth'])->name('dashboard');
 
 require __DIR__ . '/auth.php';
 
